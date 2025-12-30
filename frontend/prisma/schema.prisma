@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// ======================
+// USER
+// ======================
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+
+  fanworks  Fanwork[]
+  likes     Like[]
+  comments  Comment[]
+
+  createdAt DateTime  @default(now())
+}
+
+// ======================
+// FANWORK
+// ======================
+model Fanwork {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+
+  imageUrl    String
+  imageSize   Int
+  imageType   String
+
+  isPublished Boolean  @default(false)
+  status      String   @default("DRAFT") // DRAFT | PUBLISHED | REJECTED
+
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  likes       Like[]
+  comments    Comment[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([status])
+}
+
+// ======================
+// LIKE
+// ======================
+model Like {
+  id        Int      @id @default(autoincrement())
+
+  userId    Int
+  fanworkId Int
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fanwork   Fanwork  @relation(fields: [fanworkId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, fanworkId])
+  @@index([userId])
+  @@index([fanworkId])
+}
+
+// ======================
+// COMMENT
+// ======================
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+
+  userId    Int
+  fanworkId Int
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fanwork   Fanwork  @relation(fields: [fanworkId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([fanworkId])
+  @@index([createdAt])
+}

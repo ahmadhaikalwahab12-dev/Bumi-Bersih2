@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+.font-playfair {
+  font-family: var(--font-playfair);
+}
+
+.font-inter {
+  font-family: var(--font-inter);
+}
+
+h1, h2, h3, h4, h5, h6, span {
+    font-family: var(--font-playfair);
+}
+
+p {
+    font-family: var(--font-inter);
+}
+
+/* nav Link {
+     font-family: var(--font-inter);
+} */
