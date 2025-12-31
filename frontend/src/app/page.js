@@ -230,15 +230,20 @@ export default function BumiBersihApp() {
               </div>
             </div>
 
-            {/* Maskot Image Placeholder - Hidden on mobile */}
+            {/* Maskot Image - Hidden on mobile */}
             <div className="hidden sm:block absolute -left-4 sm:-left-6 md:-left-8 top-1/2 -translate-y-1/2 z-10">
               <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full bg-[#66AC6E] p-1.5 sm:p-2 shadow-2xl">
-                <div className="w-full h-full rounded-full border-4 sm:border-8 border-[#E3B214] bg-white flex items-center justify-center">
-                  <span className="text-gray-400 text-xs sm:text-sm">Image Placeholder</span>
+                <div className="w-full h-full rounded-full border-4 sm:border-8 border-[#E3B214] bg-white overflow-hidden flex items-center justify-center">
+                  <Image
+                    src="/images/maskot.png"
+                    fill
+                    alt="Maskot Bumi Bersih"
+                    className="object-cover"
+                    sizes="(max-width: 640px) 128px, (max-width: 768px) 160px, (max-width: 1024px) 224px, 256px"
+                  />
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>

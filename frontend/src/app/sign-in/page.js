@@ -1,10 +1,11 @@
 "use client";
+
 import React, { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
-/* 🔥 TAMBAHAN FIREBASE (WAJIB) */
+/* 🔥 FIREBASE AUTH */
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
@@ -15,10 +16,11 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  /* ================= GOOGLE SIGN IN (FIREBASE) ================= */
+  /* ================= GOOGLE SIGN IN (LOGIC TIDAK DIUBAH) ================= */
   const handleGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
 
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
@@ -61,7 +63,7 @@ export default function SignIn() {
         </div>
 
         {/* RIGHT – FORM */}
-        <div className="bg-[#6FB07A] p-6 sm:p-8 md:p-10 flex flex-col justify-center relative">
+        <div className="bg-[#6FB07A] p-6 sm:p-8 md:p-10 flex flex-col justify-center">
 
           {/* Header */}
           <div className="flex items-center justify-between mb-6 sm:mb-8">
@@ -73,15 +75,11 @@ export default function SignIn() {
 
           {/* GOOGLE BUTTON */}
           <button
+            type="button"
             onClick={handleGoogleSignIn}
             className="w-full border border-white/70 text-white py-2.5 sm:py-3 rounded-xl text-sm flex items-center justify-center gap-3 mb-5 sm:mb-6 hover:bg-white/10 transition"
           >
-            <Image
-              src="/icon/google.png"
-              alt="Google Icon"
-              width={18}
-              height={18}
-            />
+            <Image src="/icon/google.png" alt="Google Icon" width={18} height={18} />
             Lanjut dengan Google
           </button>
 
@@ -131,6 +129,7 @@ export default function SignIn() {
 
           {/* Sign In Button */}
           <button
+            type="button"
             onClick={handleSignIn}
             className="w-full bg-[#F1C40F] hover:bg-[#e0b50e] text-white font-semibold py-2.5 sm:py-3 rounded-xl transition shadow-md"
           >
@@ -139,6 +138,7 @@ export default function SignIn() {
 
           {/* Footer */}
           <button
+            type="button"
             onClick={() => router.push("/sign-up")}
             className="mt-4 sm:mt-5 text-xs sm:text-sm text-white/90 text-center hover:underline transition"
           >

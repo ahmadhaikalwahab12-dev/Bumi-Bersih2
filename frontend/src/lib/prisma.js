@@ -12,4 +12,8 @@ if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
 
+/* ✅ TAMBAHAN (TIDAK UBAH LOGIC) */
+export { prisma };
+
+/* ✅ DEFAULT EXPORT (TETAP ADA) */
 export default prisma;

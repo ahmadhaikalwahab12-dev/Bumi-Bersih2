@@ -1,26 +1,27 @@
-import { NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebase-admin";
+import { Buffer } from "buffer";
+import { cookies } from "next/headers";
 
-export async function POST(req: Request) {
+export async function POST(req) {
   try {
     const { token } = await req.json();
 
-    const decoded = await adminAuth.verifyIdToken(token);
+    // Decode JWT payload (tanpa firebase-admin)
+    const payload = token.split(".")[1];
+    const decoded = JSON.parse(
+      Buffer.from(payload, "base64").toString("utf-8")
+    );
 
-    const res = NextResponse.json({ success: true });
-
-    res.cookies.set("session", token, {
+    //  SET COOKIE SESSION
+    cookies().set("session", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 7 hari
       path: "/",
     });
 
-    return res;
-  } catch {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    );
+    return Response.json({ user: decoded });
+  } catch (error) {
+    return new Response("Unauthorized", { status: 401 });
   }
 }

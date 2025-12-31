@@ -55,7 +55,7 @@ export default function SigninBerhasil() {
 
           {/* Title */}
           <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-semibold mb-6 sm:mb-8">
-            Sign in <span className="text-yellow-300">success!</span>
+            Sign Up<span className="text-yellow-300"> success!</span>
           </h1>
 
           {/* Button */}

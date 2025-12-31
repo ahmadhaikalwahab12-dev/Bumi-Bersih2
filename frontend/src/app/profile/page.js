@@ -85,7 +85,7 @@ export default function ProfileEditPage() {
               <div className="relative">
                 <div className="w-32 h-32 rounded-full overflow-hidden">
                   {profileImage ? (
-                    <img 
+                    <Image
                       src="/icon/profil.svg" 
                       className="w-full h-full object-cover" 
                       alt="Profil" 
