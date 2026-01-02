@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
-// WAJIB agar tidak dieksekusi saat build
+// 🔥 WAJIB (INI KUNCI UTAMA)
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   try {
     const { username, email, password } = await request.json();
 
-    // Validasi input
     if (!username || !email || !password) {
       return NextResponse.json(
         { error: "Semua field harus diisi" },
@@ -17,7 +17,6 @@ export async function POST(request) {
       );
     }
 
-    // Validasi format email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -26,7 +25,6 @@ export async function POST(request) {
       );
     }
 
-    // Validasi panjang password
     if (password.length < 6) {
       return NextResponse.json(
         { error: "Password minimal 6 karakter" },
@@ -34,7 +32,6 @@ export async function POST(request) {
       );
     }
 
-    // Cek email
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -46,7 +43,6 @@ export async function POST(request) {
       );
     }
 
-    // Cek username
     const existingUsername = await prisma.user.findUnique({
       where: { username },
     });
@@ -58,13 +54,11 @@ export async function POST(request) {
       );
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Simpan user
     const user = await prisma.user.create({
       data: {
-        name: username, // field wajib NextAuth
+        name: username,
         username,
         email,
         password: hashedPassword,
@@ -83,7 +77,6 @@ export async function POST(request) {
       { status: 201 }
     );
 
-    // Cookie (opsional, NextAuth biasanya handle sendiri)
     response.cookies.set("session", user.id.toString(), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
