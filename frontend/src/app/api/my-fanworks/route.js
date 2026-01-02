@@ -6,36 +6,30 @@ import prisma from "@/lib/prisma";
 
 export async function GET() {
   try {
-    console.log("📖 Fetching MY fanworks...");
+    console.log("Fetching MY fanworks...");
 
-    /**
-     * ⚠️ DEMO USER
-     * Cari atau buat user demo
-     */
+    // Find or Create Demo User
     let user = await prisma.user.findUnique({
       where: {
         email: "demo@fanwork.com",
       },
     });
 
-    // Jika user belum ada, buat dulu
     if (!user) {
       user = await prisma.user.create({
         data: {
           name: "Verdinanda56",
           email: "demo@fanwork.com",
-          password: "demo123", // password dummy
+          password: "demo123",
         },
       });
-      console.log("✅ Demo user created");
+      console.log("Demo user created");
     }
 
-    /**
-     * ✅ AMBIL FANWORK BERDASARKAN userId
-     */
+    // Fetch User's Fanworks
     const fanworks = await prisma.fanwork.findMany({
       where: {
-        userId: user.id, // ✅ FIX: pakai userId (bukan authorId)
+        userId: user.id,
       },
       include: {
         user: {
@@ -57,9 +51,9 @@ export async function GET() {
       },
     });
 
-    console.log(`✅ Found ${fanworks.length} fanworks for user ${user.name}`);
+    console.log(`Found ${fanworks.length} fanworks for user ${user.name}`);
 
-    // ✅ Transform data
+    // Transform Data
     const transformedData = fanworks.map(work => ({
       id: work.id,
       title: work.title,
@@ -77,7 +71,7 @@ export async function GET() {
       data: transformedData,
     });
   } catch (error) {
-    console.error("❌ MY FANWORKS ERROR:", error);
+    console.error("MY FANWORKS ERROR:", error);
 
     return NextResponse.json(
       {

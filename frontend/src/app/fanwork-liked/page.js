@@ -4,25 +4,22 @@ import { Menu, X, ChevronDown, Heart, User, LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-
-// =======================
-// MAIN PAGE - LIKED FANWORK
-// =======================
+// MAIN PAGE - LIKED FANWORK //
 export default function FanworkLiked() {
   const [expandedCards, setExpandedCards] = useState({});
   const [commentInputs, setCommentInputs] = useState({});
   const [likedWorks, setLikedWorks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ FETCH LIKED FANWORKS FROM DATABASE
+  // FETCH LIKED FANWORKS FROM DATABASE
   useEffect(() => {
     fetchLikedFanworks();
   }, []);
 
-  // ✅ FUNCTION INI YANG KAMU TANYAKAN - TARUH DI SINI
+  // FUNCTION INI YANG KAMU TANYAKAN - TARUH DI SINI
   const fetchLikedFanworks = async () => {
     try {
-      // ✅ GANTI ENDPOINT DENGAN QUERY PARAMETER
+      // GANTI ENDPOINT DENGAN QUERY PARAMETER
       const userId = 1; // Atau ambil dari session/auth
       const res = await fetch(`/api/fanworks?filter=liked&userId=${userId}`, {
         cache: "no-store",
@@ -111,7 +108,7 @@ export default function FanworkLiked() {
     }
   };
 
-  // ✅ LOADING STATE
+  // LOADING STATE
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -202,7 +199,7 @@ export default function FanworkLiked() {
                       </div>
                     </div>
 
-                    {/* ✅ IMAGE - UKURAN TETAP W=387 H=296 */}
+                    {/* IMAGE - UKURAN TETAP W=387 H=296 */}
                     <div className="relative w-full h-[296px] bg-gray-100 overflow-hidden">
                       {work.imageUrl ? (
                         <Image

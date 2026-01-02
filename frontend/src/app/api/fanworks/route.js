@@ -6,16 +6,14 @@ import prisma from "@/lib/prisma";
 import fs from "fs";
 import path from "path";
 
-/* =======================
-   GET - LIST FANWORKS / LIKED FANWORKS
-======================= */
+/* GET - LIST FANWORKS / LIKED FANWORKS */
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const filter = searchParams.get("filter"); // ✅ TAMBAH PARAMETER FILTER
-    const userId = searchParams.get("userId"); // ✅ UNTUK FILTER LIKED BY USER
+    const filter = searchParams.get("filter"); // 
+    const userId = searchParams.get("userId"); // 
 
-    // ✅ JIKA FILTER = "liked", AMBIL FANWORKS YANG DI-LIKE USER
+    // JIKA FILTER = "liked", AMBIL FANWORKS YANG DI-LIKE USER
     if (filter === "liked") {
       if (!userId) {
         return NextResponse.json(
@@ -87,7 +85,7 @@ export async function GET(req) {
       });
     }
 
-    // ✅ DEFAULT: AMBIL SEMUA FANWORKS (TANPA FILTER)
+    // DEFAULT: AMBIL SEMUA FANWORKS (TANPA FILTER)
     const fanworks = await prisma.fanwork.findMany({
       where: {
         isPublished: true,
@@ -129,9 +127,7 @@ export async function GET(req) {
   }
 }
 
-/* =======================
-   POST - UPLOAD FANWORK
-======================= */
+/* POST - UPLOAD FANWORK */
 export async function POST(req) {
   try {
     const formData = await req.formData();
@@ -147,7 +143,7 @@ export async function POST(req) {
       );
     }
 
-    // ===== SIMPAN FILE =====
+    // SIMPAN FILE 
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
@@ -162,7 +158,7 @@ export async function POST(req) {
 
     const imageUrl = `/uploads/fanworks/${fileName}`;
 
-    // ===== CARI ATAU BUAT USER DEMO =====
+    // CARI ATAU BUAT USER DEMO 
     let user = await prisma.user.findUnique({
       where: { email: "demo@fanwork.com" },
     });
@@ -177,7 +173,7 @@ export async function POST(req) {
       });
     }
 
-    // ===== SIMPAN DB =====
+    //  SIMPAN DB 
     const fanwork = await prisma.fanwork.create({
       data: {
         title,
@@ -193,7 +189,7 @@ export async function POST(req) {
 
     return NextResponse.json({
       success: true,
-      message: "🎉 Fanwork berhasil diunggah!",
+      message: "Fanwork berhasil diunggah!",
       data: fanwork,
     });
   } catch (error) {
@@ -205,9 +201,7 @@ export async function POST(req) {
   }
 }
 
-/* =======================
-   PUT - UPDATE FANWORK
-======================= */
+/* PUT - UPDATE FANWORK */
 export async function PUT(req) {
   try {
     const { searchParams } = new URL(req.url);
@@ -233,7 +227,7 @@ export async function PUT(req) {
       );
     }
 
-    // ===== CEK FANWORK ADA ATAU TIDAK =====
+    // CEK FANWORK ADA ATAU TIDAK 
     const existingFanwork = await prisma.fanwork.findUnique({
       where: { id: fanworkId },
     });
@@ -249,7 +243,7 @@ export async function PUT(req) {
     let imageSize = existingFanwork.imageSize;
     let imageType = existingFanwork.imageType;
 
-    // ===== JIKA ADA GAMBAR BARU, UPLOAD DAN HAPUS YANG LAMA =====
+    // JIKA ADA GAMBAR BARU, UPLOAD DAN HAPUS YANG LAMA 
     if (image && image.size > 0) {
       // Hapus gambar lama
       if (existingFanwork.imageUrl) {
@@ -257,7 +251,7 @@ export async function PUT(req) {
           const oldImagePath = path.join(process.cwd(), "public", existingFanwork.imageUrl);
           if (fs.existsSync(oldImagePath)) {
             fs.unlinkSync(oldImagePath);
-            console.log(`✅ Old image deleted: ${oldImagePath}`);
+            console.log(`Old image deleted: ${oldImagePath}`);
           }
         } catch (err) {
           console.error("Error deleting old image:", err);
@@ -282,7 +276,7 @@ export async function PUT(req) {
       imageType = image.type;
     }
 
-    // ===== UPDATE DATABASE =====
+    // UPDATE DATABASE 
     const updatedFanwork = await prisma.fanwork.update({
       where: { id: fanworkId },
       data: {
@@ -295,7 +289,7 @@ export async function PUT(req) {
       },
     });
 
-    console.log(`✅ Fanwork updated: ID ${fanworkId}`);
+    console.log(`Fanwork updated: ID ${fanworkId}`);
 
     return NextResponse.json({
       success: true,
@@ -303,7 +297,7 @@ export async function PUT(req) {
       data: updatedFanwork,
     });
   } catch (error) {
-    console.error("❌ UPDATE FANWORK ERROR:", error);
+    console.error("UPDATE FANWORK ERROR:", error);
     return NextResponse.json(
       {
         success: false,
@@ -315,9 +309,7 @@ export async function PUT(req) {
   }
 }
 
-/* =======================
-   DELETE - HAPUS FANWORK
-======================= */
+/* DELETE - HAPUS FANWORK */
 export async function DELETE(req) {
   try {
     const { searchParams } = new URL(req.url);
@@ -331,7 +323,7 @@ export async function DELETE(req) {
       );
     }
 
-    // ===== CEK APAKAH FANWORK ADA =====
+    // CEK APAKAH FANWORK ADA 
     const fanwork = await prisma.fanwork.findUnique({
       where: { id: fanworkId },
     });
@@ -343,26 +335,26 @@ export async function DELETE(req) {
       );
     }
 
-    // ===== HAPUS FILE GAMBAR DARI SERVER =====
+    // HAPUS FILE GAMBAR DARI SERVER 
     if (fanwork.imageUrl) {
       try {
         const imagePath = path.join(process.cwd(), "public", fanwork.imageUrl);
         
         if (fs.existsSync(imagePath)) {
           fs.unlinkSync(imagePath);
-          console.log(`✅ Image deleted: ${imagePath}`);
+          console.log(`Image deleted: ${imagePath}`);
         }
       } catch (fileError) {
         console.error("Error deleting image file:", fileError);
       }
     }
 
-    // ===== HAPUS DARI DATABASE =====
+    // HAPUS DARI DATABASE 
     await prisma.fanwork.delete({
       where: { id: fanworkId },
     });
 
-    console.log(`✅ Fanwork deleted: ID ${fanworkId}`);
+    console.log(`Fanwork deleted: ID ${fanworkId}`);
 
     return NextResponse.json({
       success: true,
@@ -370,7 +362,7 @@ export async function DELETE(req) {
       deletedId: fanworkId,
     });
   } catch (error) {
-    console.error("❌ DELETE FANWORK ERROR:", error);
+    console.error("DELETE FANWORK ERROR:", error);
 
     return NextResponse.json(
       {

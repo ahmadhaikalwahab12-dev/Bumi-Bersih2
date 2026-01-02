@@ -213,34 +213,29 @@ export default function WhatToDo() {
         </div>
       </section>
 
-      {/* Maskot Section - REDESIGNED */}
-      <section className="py-12 sm:py-16 px-4 bg-gray-50">
+      {/* Maskot Section - IMPROVED WITH LARGER IMAGE */}
+      <section className="py-12 sm:py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="relative">
-            {/* Background Green Container */}
-            <div className="bg-[#66AC6E] rounded-3xl sm:rounded-[50px] shadow-2xl overflow-visible ml-0 sm:ml-16 md:ml-32">
-              <div className="flex flex-col md:flex-row items-center py-6 sm:py-8 md:py-12 pl-6 sm:pl-8 md:pl-40 pr-6 sm:pr-8 md:pr-12 gap-4 md:gap-0">
-                
-                {/* Text Content */}
+            <div className="bg-[#66AC6E] rounded-3xl sm:rounded-[50px] shadow-2xl overflow-visible ml-0 sm:ml-20 md:ml-40">
+              <div className="flex flex-col md:flex-row items-center py-6 sm:py-8 md:py-12 pl-6 sm:pl-8 md:pl-48 pr-6 sm:pr-8 md:pr-12 gap-4 md:gap-0">
+
                 <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 md:mb-4 text-white">
+                  <h2 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 sm:mb-4 text-white">
                     Menyukai <span className="text-[#E3B214]">Maskot</span> Kami?
                   </h2>
                   <p className="text-sm sm:text-base md:text-lg text-white leading-relaxed max-w-2xl mx-auto md:mx-0">
-                    Kunjungi halaman fanwork kami untuk melihat hasil karya sobat Bumi Bersih lainnya atau ikut serta dan 
-                    upload karyamu dan bantu sebarkan kesadaran isu kebersihan lingkungan.
+                    Kunjungi halaman fanwork kami untuk melihat hasil karya sobat Bumi Bersih lainnya,
+                    atau ikut serta mengupload karyamu dan bantu sebarkan kesadaran isu lingkungan.
                   </p>
                 </div>
 
-                {/* Button + Dots Area - Desktop */}
                 <div className="hidden md:flex flex-col items-end gap-3 ml-8">
-                  {/* Decorative Dots */}
                   <div className="flex gap-2 mr-2">
                     <span className="w-3 h-3 bg-white rounded-full"></span>
                     <span className="w-3 h-3 bg-[#E3B214] rounded-full"></span>
                   </div>
-                  
-                  {/* Button Desktop */}
+
                   <Link href="/fanwork">
                     <button className="bg-[#E3B214] hover:bg-yellow-300 text-white px-10 py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-xl whitespace-nowrap active:scale-95">
                       Lihat Fanwork
@@ -248,10 +243,9 @@ export default function WhatToDo() {
                   </Link>
                 </div>
 
-                {/* Button Mobile/Tablet */}
                 <div className="md:hidden w-full max-w-sm">
                   <Link href="/fanwork">
-                    <button className="bg-[#E3B214] hover:bg-yellow-300 text-white px-8 py-3 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg w-full active:scale-95">
+                    <button className="bg-[#E3B214] hover:bg-yellow-300 text-white px-8 py-3 rounded-full font-bold w-full transition-all duration-300 hover:scale-105 shadow-lg active:scale-95">
                       Lihat Fanwork
                     </button>
                   </Link>
@@ -259,15 +253,17 @@ export default function WhatToDo() {
               </div>
             </div>
 
-            {/* Maskot Circle - Positioned Outside - Hidden on Mobile */}
-            <div className="hidden sm:block absolute -left-4 sm:-left-6 md:-left-8 top-1/2 -translate-y-1/2 z-10">
-              <div className="relative">
-                {/* Outer green border */}
-                <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full bg-[#66AC6E] p-1.5 sm:p-2 shadow-2xl">
-                  {/* Yellow border */}
-                  <div className="w-full h-full rounded-full border-4 sm:border-8 border-[#E3B214] bg-white flex items-center justify-center">
-                    <span className="text-gray-400 text-xs sm:text-sm">Image Placeholder</span>
-                  </div>
+            {/* Maskot Image - LARGER SIZE - Hidden on mobile */}
+            <div className="hidden sm:block absolute -left-8 sm:-left-10 md:-left-12 top-1/2 -translate-y-1/2 z-10">
+              <div className="w-40 h-40 sm:w-48 sm:h-48 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-full bg-[#66AC6E] p-2 sm:p-2.5 shadow-2xl">
+                <div className="relative w-full h-full rounded-full border-4 sm:border-6 md:border-8 border-[#E3B214] bg-white overflow-hidden">
+                  <Image
+                    src="/images/Maskot.png"
+                    fill
+                    alt="Maskot Bumi Bersih"
+                    className="object-cover scale-137"
+                    sizes="(max-width: 640px) 192px, (max-width: 768px) 256px, (max-width: 1024px) 320px, (max-width: 1280px) 384px, 420px"
+                  />
                 </div>
               </div>
             </div>

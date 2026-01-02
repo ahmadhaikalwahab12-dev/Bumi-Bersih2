@@ -3,9 +3,7 @@ import { useState, useEffect } from "react";
 import { Heart, MessageCircle, X } from "lucide-react";
 import Image from "next/image";
 
-/* =========================
-   CARD COMPONENT
-========================= */
+/* CARD COMPONENT */
 function CardItem({
   username,
   likes: initialLikes,
@@ -151,9 +149,7 @@ function CardItem({
   );
 }
 
-/* =========================
-   GRID (DEFAULT EXPORT)
-========================= */
+/* GRID (DEFAULT EXPORT) */
 export default function QuizCard() {
   const [fanworks, setFanworks] = useState([]);
   const [loading, setLoading] = useState(true);

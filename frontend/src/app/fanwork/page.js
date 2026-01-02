@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import QuizCard from "@/app/components/QuizCard"; // ✅ FIX: sesuai nama file
+import QuizCard from "@/app/components/QuizCard";
 import UploadFanwork from "@/app/components/UploadFanwork";
 
 export default function Fanwork() {
@@ -42,10 +42,17 @@ export default function Fanwork() {
       {/* UPLOAD SECTION */}
       <section className="pb-12 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="mx-8 mb-8 flex justify-center items-end h-[526px] bg-[url(/images/img_plc.svg)]">
+          <div className="mx-8 mb-8 relative flex justify-center items-end h-[526px] rounded-2xl overflow-hidden">
+            <Image
+              src="/images/fanwork.png"
+              fill
+              alt="Fanwork Illustration"
+              className="object-cover"
+              sizes="(max-width: 1280px) 100vw, 1280px"
+            />
             <button
               onClick={() => setShowUploadModal(true)}
-              className="mb-12 bg-[#E3B214] hover:bg-yellow-500 text-white font-bold py-3 px-12 rounded-full transition-all hover:scale-105 shadow-lg"
+              className="relative z-10 mb-12 bg-[#E3B214] hover:bg-yellow-500 text-white font-bold py-3 px-12 rounded-full transition-all hover:scale-105 shadow-lg"
             >
               Upload Karyamu!
             </button>

@@ -106,7 +106,7 @@ export default function UploadFanwork({ onClose, onSuccess }) {
         message: "🎉 Karya berhasil diunggah!" 
       });
 
-      // 🔔 TAMPILKAN NOTIFIKASI
+      // TAMPILKAN NOTIFIKASI
       setShowNotif(true);
       setTimeout(() => setShowNotif(false), 3000);
 

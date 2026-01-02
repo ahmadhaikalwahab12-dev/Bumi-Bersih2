@@ -4,21 +4,19 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-// MAIN PAGE
 export default function SigninBerhasil() {
   const router = useRouter();
 
   const handleGoToSignIn = () => {
-    router.push("/fanwork-profile");
+    router.push("/fanwork");
   };
 
   return (
     <div className="min-h-screen bg-[#EDEDED] flex items-center justify-center px-4 py-8 sm:py-12">
-
-      {/* MAIN CARD (GABUNGAN) */}
+      {/* MAIN CARD */}
       <div className="w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-2">
-
-        {/* LEFT — ILLUSTRATION - Hidden on mobile */}
+        
+        {/* LEFT SIDE - ILLUSTRATION (Hidden on mobile) */}
         <div className="hidden md:flex items-center justify-center p-6 lg:p-8 bg-white">
           <div className="relative w-full h-[300px] lg:h-[340px]">
             <Image
@@ -31,11 +29,10 @@ export default function SigninBerhasil() {
           </div>
         </div>
 
-        {/* RIGHT — SUCCESS CONTENT */}
-        <div className="bg-gradient-to-b from-[#4DA065] to-[#3D7C51]
-                        p-8 sm:p-10 flex flex-col items-center justify-center text-center min-h-[400px] sm:min-h-[450px]">
-
-          {/* Icon */}
+        {/* RIGHT SIDE - SUCCESS CONTENT */}
+        <div className="bg-gradient-to-b from-[#4DA065] to-[#3D7C51] p-8 sm:p-10 flex flex-col items-center justify-center text-center min-h-[400px] sm:min-h-[450px]">
+          
+          {/* Success Icon */}
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#E3B214] rounded-full flex items-center justify-center mb-5 sm:mb-6 shadow-md">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -61,9 +58,7 @@ export default function SigninBerhasil() {
           {/* Button */}
           <button
             onClick={handleGoToSignIn}
-            className="w-full max-w-xs bg-[#E3B214] hover:bg-yellow-400 
-                       text-white py-3 rounded-xl text-base sm:text-lg font-semibold 
-                       transition-all shadow-md"
+            className="w-full max-w-xs bg-[#E3B214] hover:bg-yellow-400 text-white py-3 rounded-xl text-base sm:text-lg font-semibold transition-all shadow-md"
           >
             Kembali ke fanwork
           </button>

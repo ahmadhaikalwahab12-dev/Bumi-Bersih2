@@ -69,7 +69,7 @@ export async function DELETE(request, { params }) {
   try {
     const { id } = params;
 
-    console.log("🗑️ Deleting fanwork:", id);
+    console.log("Deleting fanwork:", id);
 
     // Get fanwork with images
     const fanwork = await prisma.fanwork.findUnique({
@@ -92,7 +92,7 @@ export async function DELETE(request, { params }) {
       
       if (fs.existsSync(filepath)) {
         fs.unlinkSync(filepath);
-        console.log("🗑️ Deleted file:", image.filename);
+        console.log("Deleted file:", image.filename);
       }
     }
 
@@ -101,7 +101,7 @@ export async function DELETE(request, { params }) {
       where: { id },
     });
 
-    console.log("✅ Fanwork deleted:", id);
+    console.log("Fanwork deleted:", id);
 
     return NextResponse.json({
       success: true,
@@ -126,7 +126,7 @@ export async function PATCH(request, { params }) {
     const { id } = params;
     const body = await request.json();
 
-    console.log("✏️ Updating fanwork:", id, body);
+    console.log("Updating fanwork:", id, body);
 
     const fanwork = await prisma.fanwork.update({
       where: { id },
@@ -149,7 +149,7 @@ export async function PATCH(request, { params }) {
       },
     });
 
-    console.log("✅ Fanwork updated:", id);
+    console.log("Fanwork updated:", id);
 
     return NextResponse.json({
       success: true,

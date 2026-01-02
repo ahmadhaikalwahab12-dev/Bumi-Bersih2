@@ -1,8 +1,28 @@
 "use client";
 import Link from "next/link";
 import React from "react";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+  
+  // ✅ Daftar halaman yang TIDAK menampilkan footer
+  const hideFooterPages = [
+    "/signin",
+    "/signup", 
+    "/signin-berhasil",
+    "/signup-berhasil",
+    "/sign-in",
+    "/sign-up"
+  ];
+  
+  // ✅ Cek apakah halaman saat ini ada di daftar
+  const shouldHide = hideFooterPages.some(page => pathname?.startsWith(page));
+  
+  if (shouldHide) {
+    return null; // Tidak render footer
+  }
+
   return (
     <footer className="bg-[#66AC6E] text-white">
       <div className="py-8 px-4">

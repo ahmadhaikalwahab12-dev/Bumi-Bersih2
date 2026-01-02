@@ -1,9 +1,7 @@
 "use client";
-import React, { useState } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-
 
 export default function RecycleBay() {
   return (
@@ -43,13 +41,28 @@ export default function RecycleBay() {
         </div>
       </section>
 
+      {/* Illustration Section */}
+      <section className="pb-16 px-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="relative w-full h-96 rounded-3xl overflow-hidden mb-12">
+            <Image
+              src="/images/fanwork.png"
+              alt="Recycle Bay Illustration"
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 100vw, 1200px"
+              priority
+            />
+          </div>
+        </div>
+      </section>
+
       {/* HERO SECTION 2 — Video Tutorials */}
       <section className="pb-12 px-4" id="fanwork">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* ==================== CARD VIDEO 1 ==================== */}
+            {/* Card Video 1 */}
             <div className="bg-white rounded-3xl shadow-xl p-0 overflow-hidden border border-gray-200">
-              {/* Header Title */}
               <div className="bg-[#66AC6E] px-6 pt-6 pb-3 text-white rounded-t-3xl">
                 <h3 className="text-xl font-semibold">
                   Pot Tanaman dari Botol Bekas
@@ -57,7 +70,6 @@ export default function RecycleBay() {
                 <p className="text-sm opacity-90">Made at Theorem with love</p>
               </div>
 
-              {/* YouTube Video */}
               <div
                 className="relative cursor-pointer"
                 onClick={() =>
@@ -76,10 +88,9 @@ export default function RecycleBay() {
                 ></iframe>
               </div>
 
-              {/* Cara Pembuatan */}
               <div className="p-6">
                 <p className="font-semibold text-lg text-[#66AC6E]">
-                  Cara <span className="text-[#f1c93b] ">Pembuatan :</span>
+                  Cara <span className="text-[#f1c93b]">Pembuatan :</span>
                 </p>
 
                 <ul className="text-gray-700 text-sm mt-2 space-y-1 list-decimal list-inside">
@@ -102,9 +113,8 @@ export default function RecycleBay() {
               </div>
             </div>
 
-            {/* ==================== CARD VIDEO 2 ==================== */}
+            {/* Card Video 2 */}
             <div className="bg-white rounded-3xl shadow-xl p-0 overflow-hidden border border-gray-200">
-              {/* Header */}
               <div className="bg-[#66AC6E] px-6 pt-6 pb-3 text-white rounded-t-3xl">
                 <h3 className="text-xl font-semibold">
                   Wadah Serbaguna dari Kardus Bekas
@@ -112,7 +122,6 @@ export default function RecycleBay() {
                 <p className="text-sm opacity-90">Made at Theorem with love</p>
               </div>
 
-              {/* Video */}
               <div
                 className="relative cursor-pointer"
                 onClick={() =>
@@ -131,7 +140,6 @@ export default function RecycleBay() {
                 ></iframe>
               </div>
 
-              {/* Cara Pembuatan */}
               <div className="p-6">
                 <p className="font-semibold text-lg text-[#66AC6E]">
                   Cara <span className="text-[#f1c93b]">Pembuatan :</span>
@@ -157,15 +165,13 @@ export default function RecycleBay() {
               </div>
             </div>
 
-            {/* ==================== CARD VIDEO 3 ==================== */}
+            {/* Card Video 3 */}
             <div className="bg-white rounded-3xl shadow-xl p-0 overflow-hidden border border-gray-200">
-              {/* Header */}
               <div className="bg-[#66AC6E] px-6 pt-6 pb-3 text-white rounded-t-3xl">
                 <h3 className="text-xl font-semibold">Tas dari Kaos Lama</h3>
                 <p className="text-sm opacity-90">Made at Theorem with love</p>
               </div>
 
-              {/* Video */}
               <div
                 className="relative cursor-pointer"
                 onClick={() =>
@@ -184,10 +190,9 @@ export default function RecycleBay() {
                 ></iframe>
               </div>
 
-              {/* Cara Pembuatan */}
               <div className="p-6">
                 <p className="font-semibold text-lg text-[#66AC6E]">
-                  Cara <span className="text-[#f1c93b] ">Pembuatan :</span>
+                  Cara <span className="text-[#f1c93b]">Pembuatan :</span>
                 </p>
 
                 <ul className="text-gray-700 text-sm mt-2 space-y-1 list-decimal list-inside">
@@ -214,20 +219,18 @@ export default function RecycleBay() {
       </section>
 
       {/* Maskot Section */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-12 sm:py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="relative">
-            <div className="bg-[#66AC6E] rounded-[50px] shadow-2xl overflow-visible ml-0 md:ml-32">
-              <div className="flex items-center py-8 md:py-12 pl-8 md:pl-40 pr-8 md:pr-12">
-                <div className="flex-1">
-                  <h2 className="text-2xl md:text-4xl font-bold mb-4 text-white">
-                    Menyukai <span className="text-[#E3B214]">Maskot</span>{" "}
-                    Kami?
+            <div className="bg-[#66AC6E] rounded-3xl sm:rounded-[50px] shadow-2xl overflow-visible ml-0 sm:ml-20 md:ml-40">
+              <div className="flex flex-col md:flex-row items-center py-6 sm:py-8 md:py-12 pl-6 sm:pl-8 md:pl-48 pr-6 sm:pr-8 md:pr-12 gap-4 md:gap-0">
+                <div className="flex-1 text-center md:text-left">
+                  <h2 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 sm:mb-4 text-white">
+                    Menyukai <span className="text-[#E3B214]">Maskot</span> Kami?
                   </h2>
-                  <p className="text-base md:text-lg text-white leading-relaxed max-w-2xl">
-                    Kunjungi halaman fanwork kami untuk melihat hasil karya
-                    sobat Bumi Bersih lainnya atau ikut serta dan upload karyamu
-                    dan bantu sebarkan kesadaran isu kebersihan lingkungan.
+                  <p className="text-sm sm:text-base md:text-lg text-white leading-relaxed max-w-2xl mx-auto md:mx-0">
+                    Kunjungi halaman fanwork kami untuk melihat hasil karya sobat Bumi Bersih lainnya,
+                    atau ikut serta mengupload karyamu dan bantu sebarkan kesadaran isu lingkungan.
                   </p>
                 </div>
 
@@ -243,25 +246,28 @@ export default function RecycleBay() {
                     </button>
                   </Link>
                 </div>
-              </div>
 
-              <div className="md:hidden px-8 pb-8">
-                <Link href="/fanwork">
-                  <button className="bg-[#E3B214] hover:bg-yellow-300 text-white px-8 py-3 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg w-full active:scale-95">
-                    Lihat Fanwork
-                  </button>
-                </Link>
+                <div className="md:hidden w-full max-w-sm">
+                  <Link href="/fanwork">
+                    <button className="bg-[#E3B214] hover:bg-yellow-300 text-white px-8 py-3 rounded-full font-bold w-full transition-all duration-300 hover:scale-105 shadow-lg active:scale-95">
+                      Lihat Fanwork
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
 
-            <div className="absolute -left-4 md:-left-8 top-1/2 -translate-y-1/2 z-10">
-              <div className="relative">
-                <div className="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full bg-[#66AC6E] p-2 shadow-2xl">
-                  <div className="w-full h-full rounded-full border-8 border-[#E3B214] bg-white flex items-center justify-center">
-                    <span className="text-gray-400 text-xs md:text-sm">
-                      Image Placeholder
-                    </span>
-                  </div>
+            {/* Maskot Image */}
+            <div className="hidden sm:block absolute -left-8 sm:-left-10 md:-left-12 top-1/2 -translate-y-1/2 z-10">
+              <div className="w-40 h-40 sm:w-48 sm:h-48 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-full bg-[#66AC6E] p-2 sm:p-2.5 shadow-2xl">
+                <div className="relative w-full h-full rounded-full border-4 sm:border-6 md:border-8 border-[#E3B214] bg-white overflow-hidden">
+                  <Image
+                    src="/images/Maskot.png"
+                    fill
+                    alt="Maskot Bumi Bersih"
+                    className="object-cover scale-137"
+                    sizes="(max-width: 640px) 192px, (max-width: 768px) 256px, (max-width: 1024px) 320px, (max-width: 1280px) 384px, 420px"
+                  />
                 </div>
               </div>
             </div>
@@ -270,7 +276,7 @@ export default function RecycleBay() {
       </section>
 
       {/* Final CTA Section */}
-       <section className="pb-20 px-4">
+      <section className="pb-20 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-gray-50 rounded-3xl shadow-xl p-8 md:p-10 text-center border-2 border-gray-100">
             <div className="flex justify-center gap-2 mb-4">
@@ -282,7 +288,7 @@ export default function RecycleBay() {
               Apa yang Bisa <span className="text-[#66AC6E]">Kamu</span>{" "}
               <span className="text-yellow-500">Lakukan?</span>
             </h2>
-            
+
             <p className="text-[#66AC6E] leading-relaxed mb-6 max-w-2xl mx-auto">
               Pelajari berbagai langkah sederhana yang bisa kamu mulai sekarang untuk menjaga kebersihan lingkungan dan memberi dampak nyata di sekitarmu.
             </p>
@@ -302,7 +308,6 @@ export default function RecycleBay() {
           </div>
         </div>
       </section>
-
     </div>
   );
 }

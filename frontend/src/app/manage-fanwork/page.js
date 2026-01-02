@@ -9,22 +9,20 @@ import EditFanworkModal from "@/app/components/EditFanworkModal";
 
 export default function ManageFanwork() {
   const router = useRouter();
+
+  // States
   const [fanworks, setFanworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedCards, setExpandedCards] = useState({});
   const [commentInputs, setCommentInputs] = useState({});
   const [likesData, setLikesData] = useState({});
   const [commentsData, setCommentsData] = useState({});
-  
-  // Edit Modal States
   const [editingFanwork, setEditingFanwork] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  
-  // DELETE CONFIRMATION MODAL STATE
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingFanworkId, setDeletingFanworkId] = useState(null);
 
-  // ================= FETCH DATA =================
+  // Fetch Functions
   const fetchFanworks = async () => {
     try {
       const res = await fetch("/api/my-fanworks", {
@@ -83,6 +81,7 @@ export default function ManageFanwork() {
     fetchFanworks();
   }, []);
 
+  // Handler Functions
   const toggleExpand = (id) => {
     setExpandedCards((prev) => ({
       ...prev,
@@ -210,6 +209,7 @@ export default function ManageFanwork() {
     fetchFanworks();
   };
 
+  // Loading State
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F3F1E7]">
@@ -223,33 +223,24 @@ export default function ManageFanwork() {
 
   return (
     <div className="min-h-screen bg-[#F3F1E7]">
-      {/* SIDEBAR & MAIN LAYOUT */}
       <div className="flex pt-20">
+        
         {/* SIDEBAR */}
         <div className="hidden lg:block w-64 p-6">
           <div className="bg-white border-4 border-[#66AC6E] rounded-3xl p-6 sticky top-24 shadow-lg">
             <ul className="space-y-3">
               <li>
-                <Link
-                  href="/profile"
-                  className="block px-4 py-3 rounded-xl text-[#66AC6E] hover:bg-green-50 font-medium transition-all duration-200"
-                >
+                <Link href="/profile" className="block px-4 py-3 rounded-xl text-[#66AC6E] hover:bg-green-50 font-medium transition-all duration-200">
                   Edit Profile
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/manage-fanwork"
-                  className="block px-4 py-3 rounded-xl bg-[#66AC6E] text-white font-medium shadow-md"
-                >
+                <Link href="/manage-fanwork" className="block px-4 py-3 rounded-xl bg-[#66AC6E] text-white font-medium shadow-md">
                   Manage Fanwork
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/fanwork-liked"
-                  className="block px-4 py-3 rounded-xl text-[#66AC6E] hover:bg-green-50 font-medium transition-all duration-200"
-                >
+                <Link href="/fanwork-liked" className="block px-4 py-3 rounded-xl text-[#66AC6E] hover:bg-green-50 font-medium transition-all duration-200">
                   Liked Fanwork
                 </Link>
               </li>
@@ -260,6 +251,8 @@ export default function ManageFanwork() {
         {/* MAIN CONTENT */}
         <div className="flex-1 px-6 py-8">
           <div className="max-w-6xl mx-auto">
+            
+            {/* Empty State */}
             {fanworks.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-3xl shadow-lg">
                 <div className="text-6xl mb-4">🎨</div>
@@ -271,17 +264,17 @@ export default function ManageFanwork() {
                 </Link>
               </div>
             ) : (
+              
+              /* Fanwork Grid */
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {fanworks.map((item) => {
                   const likeData = likesData[item.id] || { totalLikes: 0, isLiked: false };
                   const workComments = commentsData[item.id] || [];
                   
                   return (
-                    <div
-                      key={item.id}
-                      className="bg-white rounded-3xl shadow-lg overflow-hidden"
-                    >
-                      {/* HEADER USER */}
+                    <div key={item.id} className="bg-white rounded-3xl shadow-lg overflow-hidden">
+                      
+                      {/* Header */}
                       <div className="flex items-center justify-between bg-[#66AC6E] px-5 py-3 rounded-t-3xl">
                         <div className="flex items-center space-x-2">
                           <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
@@ -291,21 +284,13 @@ export default function ManageFanwork() {
                             {item.user?.name || "Verdinanda56"}
                           </span>
                         </div>
-                        <button
-                          onClick={() => handleLike(item.id)}
-                          className="flex items-center space-x-2 text-white hover:scale-110 transition"
-                        >
-                          <span className="font-semibold text-sm">
-                            {likeData.totalLikes}
-                          </span>
-                          <Heart 
-                            size={18} 
-                            className={likeData.isLiked ? "fill-current" : ""}
-                          />
+                        <button onClick={() => handleLike(item.id)} className="flex items-center space-x-2 text-white hover:scale-110 transition">
+                          <span className="font-semibold text-sm">{likeData.totalLikes}</span>
+                          <Heart size={18} className={likeData.isLiked ? "fill-current" : ""} />
                         </button>
                       </div>
 
-                      {/* ✅ IMAGE - UKURAN TETAP W=387 H=296 */}
+                      {/* Image */}
                       <div className="relative w-full h-[296px] bg-gray-100 overflow-hidden">
                         {item.imageUrl ? (
                           <Image
@@ -326,14 +311,10 @@ export default function ManageFanwork() {
                         )}
                       </div>
 
-                      {/* CONTENT */}
+                      {/* Content */}
                       <div className="p-5">
-                        {/* TITLE */}
-                        <h3 className="text-lg font-bold text-[#66AC6E] mb-2">
-                          {item.title}
-                        </h3>
+                        <h3 className="text-lg font-bold text-[#66AC6E] mb-2">{item.title}</h3>
 
-                        {/* DESCRIPTION */}
                         <p className="text-sm text-gray-600 leading-relaxed mb-3">
                           {expandedCards[item.id]
                             ? item.description
@@ -342,38 +323,27 @@ export default function ManageFanwork() {
                             : item.description}
                         </p>
 
-                        {/* BACA LEBIH LANJUT BUTTON */}
                         {item.description.length > 100 && (
-                          <button
-                            onClick={() => toggleExpand(item.id)}
-                            className="text-[#66AC6E] font-semibold text-sm mb-3 flex items-center space-x-1 hover:underline"
-                          >
+                          <button onClick={() => toggleExpand(item.id)} className="text-[#66AC6E] font-semibold text-sm mb-3 flex items-center space-x-1 hover:underline">
                             <span>{expandedCards[item.id] ? "Tutup" : "Baca lebih lanjut"}</span>
                             <span>{expandedCards[item.id] ? "▴" : "▾"}</span>
                           </button>
                         )}
 
-                        {/* COMMENTS INFO */}
                         <div className="mb-3">
                           <p className="text-sm text-gray-500">
-                            {workComments.length === 0 
-                              ? "Belum ada komentar" 
-                              : `${workComments.length} komentar`}
+                            {workComments.length === 0 ? "Belum ada komentar" : `${workComments.length} komentar`}
                           </p>
                         </div>
 
-                        {/* COMMENTS SECTION (when expanded) */}
+                        {/* Comments Section */}
                         {expandedCards[item.id] && (
                           <div className="mb-4 pt-4 border-t border-gray-200">
-                            <button
-                              onClick={() => toggleExpand(item.id)}
-                              className="text-xs font-semibold text-gray-700 mb-3 flex items-center space-x-1 hover:text-[#66AC6E]"
-                            >
+                            <button onClick={() => toggleExpand(item.id)} className="text-xs font-semibold text-gray-700 mb-3 flex items-center space-x-1 hover:text-[#66AC6E]">
                               <span>Tutup</span>
                               <span>▴</span>
                             </button>
 
-                            {/* COMMENTS LIST */}
                             {workComments.length > 0 && (
                               <div className="space-y-2 mb-3 max-h-40 overflow-y-auto">
                                 {workComments.map((comment) => (
@@ -386,23 +356,18 @@ export default function ManageFanwork() {
                                         {comment.user?.name || "User"}
                                       </span>
                                     </div>
-                                    <p className="text-sm text-gray-700 pl-7">
-                                      {comment.content}
-                                    </p>
+                                    <p className="text-sm text-gray-700 pl-7">{comment.content}</p>
                                   </div>
                                 ))}
                               </div>
                             )}
 
-                            {/* COMMENT INPUT */}
                             <div className="flex items-center space-x-2">
                               <input
                                 type="text"
                                 placeholder="Ketik komentar..."
                                 value={commentInputs[item.id] || ""}
-                                onChange={(e) =>
-                                  handleCommentChange(item.id, e.target.value)
-                                }
+                                onChange={(e) => handleCommentChange(item.id, e.target.value)}
                                 onKeyPress={(e) => {
                                   if (e.key === "Enter") {
                                     handlePostComment(item.id);
@@ -410,29 +375,19 @@ export default function ManageFanwork() {
                                 }}
                                 className="flex-1 py-2 px-3 border-2 border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#66AC6E] transition"
                               />
-                              <button
-                                onClick={() => handlePostComment(item.id)}
-                                className="bg-[#E3B214] hover:bg-yellow-500 text-white px-4 py-2 rounded-lg font-semibold text-sm transition shadow-md"
-                              >
+                              <button onClick={() => handlePostComment(item.id)} className="bg-[#E3B214] hover:bg-yellow-500 text-white px-4 py-2 rounded-lg font-semibold text-sm transition shadow-md">
                                 Post
                               </button>
                             </div>
                           </div>
                         )}
 
-                        {/* ACTION BUTTONS */}
+                        {/* Action Buttons */}
                         <div className="flex gap-3 mt-4">
-                          <button
-                            onClick={() => handleDelete(item.id)}
-                            className="bg-[#E85D75] hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-xl transition shadow-md"
-                          >
+                          <button onClick={() => handleDelete(item.id)} className="bg-[#E85D75] hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-xl transition shadow-md">
                             Hapus
                           </button>
-
-                          <button
-                            onClick={() => handleEdit(item)}
-                            className="flex-1 bg-[#E3B214] hover:bg-yellow-500 text-white font-semibold py-3 rounded-xl transition shadow-md"
-                          >
+                          <button onClick={() => handleEdit(item)} className="flex-1 bg-[#E3B214] hover:bg-yellow-500 text-white font-semibold py-3 rounded-xl transition shadow-md">
                             Edit Postingan
                           </button>
                         </div>
@@ -446,36 +401,27 @@ export default function ManageFanwork() {
         </div>
       </div>
 
-      {/* DELETE CONFIRMATION MODAL */}
+      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-[#66AC6E] rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden animate-scale-in">
-            {/* Icon */}
             <div className="flex justify-center pt-8 pb-4">
               <div className="w-16 h-16 bg-[#E3B214] rounded-full flex items-center justify-center">
                 <AlertTriangle className="w-8 h-8 text-white" />
               </div>
             </div>
 
-            {/* Text Content */}
             <div className="px-8 pb-6 text-center">
               <h3 className="text-white font-bold text-lg mb-2">
                 Anda yakin ingin menghapus fanwork ini?
               </h3>
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-3 px-6 pb-6">
-              <button
-                onClick={confirmDelete}
-                className="flex-1 bg-[#E3B214] hover:bg-yellow-500 text-white font-semibold py-3 rounded-lg transition-all shadow-md hover:shadow-lg"
-              >
+              <button onClick={confirmDelete} className="flex-1 bg-[#E3B214] hover:bg-yellow-500 text-white font-semibold py-3 rounded-lg transition-all shadow-md hover:shadow-lg">
                 Hapus
               </button>
-              <button
-                onClick={cancelDelete}
-                className="flex-1 bg-white hover:bg-gray-100 text-[#66AC6E] font-semibold py-3 rounded-lg transition-all shadow-md hover:shadow-lg"
-              >
+              <button onClick={cancelDelete} className="flex-1 bg-white hover:bg-gray-100 text-[#66AC6E] font-semibold py-3 rounded-lg transition-all shadow-md hover:shadow-lg">
                 Batal
               </button>
             </div>
@@ -483,7 +429,7 @@ export default function ManageFanwork() {
         </div>
       )}
 
-      {/* EDIT MODAL */}
+      {/* Edit Modal */}
       {showEditModal && editingFanwork && (
         <EditFanworkModal
           fanwork={editingFanwork}

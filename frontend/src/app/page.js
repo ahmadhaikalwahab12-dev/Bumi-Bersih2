@@ -190,12 +190,12 @@ export default function BumiBersihApp() {
         </div>
       </section>
 
-      {/* Maskot Section */}
-      <section className="py-12 sm:py-16 px-4 bg-white">
+      {/* Maskot Section - IMPROVED WITH LARGER IMAGE */}
+      <section className="py-12 sm:py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="relative">
-            <div className="bg-[#66AC6E] rounded-3xl sm:rounded-[50px] shadow-2xl overflow-visible ml-0 sm:ml-16 md:ml-32">
-              <div className="flex flex-col md:flex-row items-center py-6 sm:py-8 md:py-12 pl-6 sm:pl-8 md:pl-40 pr-6 sm:pr-8 md:pr-12 gap-4 md:gap-0">
+            <div className="bg-[#66AC6E] rounded-3xl sm:rounded-[50px] shadow-2xl overflow-visible ml-0 sm:ml-20 md:ml-40">
+              <div className="flex flex-col md:flex-row items-center py-6 sm:py-8 md:py-12 pl-6 sm:pl-8 md:pl-48 pr-6 sm:pr-8 md:pr-12 gap-4 md:gap-0">
 
                 <div className="flex-1 text-center md:text-left">
                   <h2 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 sm:mb-4 text-white">
@@ -230,16 +230,16 @@ export default function BumiBersihApp() {
               </div>
             </div>
 
-            {/* Maskot Image - Hidden on mobile */}
-            <div className="hidden sm:block absolute -left-4 sm:-left-6 md:-left-8 top-1/2 -translate-y-1/2 z-10">
-              <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full bg-[#66AC6E] p-1.5 sm:p-2 shadow-2xl">
-                <div className="w-full h-full rounded-full border-4 sm:border-8 border-[#E3B214] bg-white overflow-hidden flex items-center justify-center">
+            {/* Maskot Image - LARGER SIZE - Hidden on mobile */}
+            <div className="hidden sm:block absolute -left-8 sm:-left-10 md:-left-12 top-1/2 -translate-y-1/2 z-10">
+              <div className="w-40 h-40 sm:w-48 sm:h-48 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-full bg-[#66AC6E] p-2 sm:p-2.5 shadow-2xl">
+                <div className="relative w-full h-full rounded-full border-4 sm:border-6 md:border-8 border-[#E3B214] bg-white overflow-hidden">
                   <Image
-                    src="/images/maskot.png"
+                    src="/images/Maskot.png"
                     fill
                     alt="Maskot Bumi Bersih"
-                    className="object-cover"
-                    sizes="(max-width: 640px) 128px, (max-width: 768px) 160px, (max-width: 1024px) 224px, 256px"
+                    className="object-cover scale-137"
+                    sizes="(max-width: 640px) 192px, (max-width: 768px) 256px, (max-width: 1024px) 320px, (max-width: 1280px) 384px, 420px"
                   />
                 </div>
               </div>
@@ -287,7 +287,6 @@ export default function BumiBersihApp() {
           </div>
         </div>
       </section>
-
     </div>
   );
 }

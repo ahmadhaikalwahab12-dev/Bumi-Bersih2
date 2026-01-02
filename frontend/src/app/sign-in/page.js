@@ -4,8 +4,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
-
-/* 🔥 FIREBASE AUTH */
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
@@ -16,7 +14,6 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  /* ================= GOOGLE SIGN IN (LOGIC TIDAK DIUBAH) ================= */
   const handleGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
@@ -37,7 +34,6 @@ export default function SignIn() {
     }
   };
 
-  /* ================= EMAIL SIGN IN (TIDAK DIUBAH) ================= */
   const handleSignIn = () => {
     console.log("Sign in with email:", email);
     router.push("/signin-berhasil");
@@ -45,9 +41,10 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen bg-[#F4F2EA] flex items-center justify-center px-4 py-8 sm:py-12">
+      {/* MAIN CARD */}
       <div className="w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-2">
-
-        {/* LEFT – ILLUSTRATION */}
+        
+        {/* LEFT SIDE - ILLUSTRATION (Hidden on mobile) */}
         <div className="hidden md:block relative bg-[#F8F8F8] p-6 lg:p-8">
           <div className="h-full flex items-center justify-center">
             <div className="relative w-full h-[300px] lg:h-[340px]">
@@ -62,9 +59,9 @@ export default function SignIn() {
           </div>
         </div>
 
-        {/* RIGHT – FORM */}
+        {/* RIGHT SIDE - SIGN IN FORM */}
         <div className="bg-[#6FB07A] p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-
+          
           {/* Header */}
           <div className="flex items-center justify-between mb-6 sm:mb-8">
             <h1 className="text-3xl sm:text-4xl font-bold text-white">
@@ -73,7 +70,7 @@ export default function SignIn() {
             <div className="w-3 h-3 sm:w-4 sm:h-4 bg-[#F1C40F] rounded-full" />
           </div>
 
-          {/* GOOGLE BUTTON */}
+          {/* Google Sign In Button */}
           <button
             type="button"
             onClick={handleGoogleSignIn}
@@ -90,7 +87,7 @@ export default function SignIn() {
             <div className="flex-1 h-px bg-white/30" />
           </div>
 
-          {/* Email */}
+          {/* Email Field */}
           <div className="mb-4">
             <label className="block text-white text-sm mb-1.5">
               Username atau Email
@@ -104,7 +101,7 @@ export default function SignIn() {
             />
           </div>
 
-          {/* Password */}
+          {/* Password Field */}
           <div className="mb-5 sm:mb-6">
             <label className="block text-white text-sm mb-1.5">
               Password
@@ -136,7 +133,7 @@ export default function SignIn() {
             Sign In
           </button>
 
-          {/* Footer */}
+          {/* Footer Link */}
           <button
             type="button"
             onClick={() => router.push("/sign-up")}
@@ -144,7 +141,6 @@ export default function SignIn() {
           >
             Baru? Buat akun di sini
           </button>
-
         </div>
       </div>
     </div>
