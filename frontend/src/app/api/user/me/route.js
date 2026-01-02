@@ -1,16 +1,31 @@
+import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
+
+// WAJIB agar tidak dieksekusi saat build
+export const dynamic = "force-dynamic";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
+    if (!JWT_SECRET) {
+      console.error("JWT_SECRET belum diset");
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
+    const cookieStore = cookies(); // TIDAK async
     const session = cookieStore.get("session")?.value;
 
     if (!session) {
-      return new Response("Unauthorized", { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
     }
 
     const decoded = jwt.verify(session, JWT_SECRET);
@@ -28,12 +43,18 @@ export async function GET() {
     });
 
     if (!user) {
-      return new Response("User not found", { status: 404 });
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
     }
 
-    return Response.json(user);
+    return NextResponse.json(user);
   } catch (error) {
     console.error("GET /api/user/me error:", error);
-    return new Response("Unauthorized", { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
   }
 }
