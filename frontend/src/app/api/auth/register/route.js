@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
+// WAJIB agar tidak dieksekusi saat build
+export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   try {
@@ -33,7 +34,7 @@ export async function POST(request) {
       );
     }
 
-    // Cek apakah email sudah terdaftar
+    // Cek email
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -45,34 +46,31 @@ export async function POST(request) {
       );
     }
 
-    // Cek apakah username sudah terdaftar
-    if (username) {
-      const existingUsername = await prisma.user.findUnique({
-        where: { username },
-      });
+    // Cek username
+    const existingUsername = await prisma.user.findUnique({
+      where: { username },
+    });
 
-      if (existingUsername) {
-        return NextResponse.json(
-          { error: "Username sudah digunakan" },
-          { status: 400 }
-        );
-      }
+    if (existingUsername) {
+      return NextResponse.json(
+        { error: "Username sudah digunakan" },
+        { status: 400 }
+      );
     }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Buat user baru di database
+    // Simpan user
     const user = await prisma.user.create({
       data: {
-        name: username, // PENTING: field 'name' wajib diisi
+        name: username, // field wajib NextAuth
         username,
         email,
         password: hashedPassword,
       },
     });
 
-    // Buat session/cookie untuk auto login
     const response = NextResponse.json(
       {
         message: "Registrasi berhasil",
@@ -85,12 +83,12 @@ export async function POST(request) {
       { status: 201 }
     );
 
-    // Set cookie untuk auto login
+    // Cookie (opsional, NextAuth biasanya handle sendiri)
     response.cookies.set("session", user.id.toString(), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 hari
+      maxAge: 60 * 60 * 24 * 7,
       path: "/",
     });
 
@@ -101,7 +99,5 @@ export async function POST(request) {
       { error: "Terjadi kesalahan saat registrasi" },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
