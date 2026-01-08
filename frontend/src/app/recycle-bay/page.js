@@ -46,7 +46,7 @@ export default function RecycleBay() {
         <div className="max-w-5xl mx-auto">
           <div className="relative w-full h-96 rounded-3xl overflow-hidden mb-12">
             <Image
-              src="/images/fanwork.png"
+              src="/images/Fanwork.png"
               alt="Recycle Bay Illustration"
               fill
               className="object-contain"

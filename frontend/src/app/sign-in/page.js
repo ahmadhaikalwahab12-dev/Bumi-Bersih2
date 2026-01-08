@@ -49,7 +49,7 @@ export default function SignIn() {
           <div className="h-full flex items-center justify-center">
             <div className="relative w-full h-[300px] lg:h-[340px]">
               <Image
-                src="/images/login.png"
+                src="/images/Login.png"
                 alt="Login Illustration"
                 fill
                 className="object-contain"

@@ -44,7 +44,7 @@ export default function Fanwork() {
         <div className="max-w-7xl mx-auto">
           <div className="mx-8 mb-8 relative flex justify-center items-end h-[526px] rounded-2xl overflow-hidden">
             <Image
-              src="/images/fanwork.png"
+              src="/images/Fanwork.png"
               fill
               alt="Fanwork Illustration"
               className="object-cover"

@@ -157,7 +157,7 @@ export default function BumiBersihApp() {
             <div className="relative w-full max-w-md md:max-w-lg">
               <div className="relative w-full aspect-square">
                 <Image
-                  src="/images/Home Page 44.png"
+                  src="/images/homepage5.png"
                   fill
                   alt="Daur Ulang"
                   className="object-contain"

@@ -20,7 +20,7 @@ export default function SignupBerhasil() {
         <div className="hidden md:flex items-center justify-center p-6 lg:p-8 bg-white">
           <div className="relative w-full h-[300px] lg:h-[340px]">
             <Image
-              src="/images/login.png"
+              src="/images/Login.png"
               alt="Signup Success Illustration"
               fill
               className="object-contain"

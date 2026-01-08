@@ -154,6 +154,24 @@ export default function QuizCard() {
   const [fanworks, setFanworks] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Contoh Fanwork Data (Static)
+  const exampleFanworks = [
+    {
+      id: "example-1",
+      user: { name: "Demo User" },
+      title: "Flora Pendaur Ulang Handal",
+      description: "Flora sedang memulai ulang berbagai barang bekas untuk menguranginya menjadi karya yang lebih berguna.",
+      imageUrl: "/images/Fan Page 1.png",
+    },
+    {
+      id: "example-2",
+      user: { name: "Demo User" },
+      title: "Trash is Bad, Bad is Trash",
+      description: "Karya yang menggambarkan pentingnya menjaga kebersihan lingkungan dan dampak buruk dari sampah yang tidak dikelola dengan baik.",
+      imageUrl: "/images/Fan Page 2.png",
+    },
+  ];
+
   useEffect(() => {
     fetchFanworks();
   }, []);
@@ -184,7 +202,10 @@ export default function QuizCard() {
     );
   }
 
-  if (fanworks.length === 0) {
+  // Gabungkan contoh fanwork dengan data dari API
+  const allFanworks = [...exampleFanworks, ...fanworks];
+
+  if (allFanworks.length === 0) {
     return (
       <div className="py-12 px-4">
         <div className="text-center text-gray-500">
@@ -197,7 +218,7 @@ export default function QuizCard() {
   return (
     <div className="py-12 px-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        {fanworks.map((item) => (
+        {allFanworks.map((item) => (
           <CardItem
             key={item.id}
             username={item.user?.name || "User"}

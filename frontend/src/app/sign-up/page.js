@@ -60,7 +60,7 @@ export default function SignUpPage() {
         <div className="hidden md:flex items-center justify-center bg-white p-6 lg:p-8">
           <div className="relative w-full h-[320px] lg:h-[380px]">
             <Image
-              src="/images/login.png"
+              src="/images/Login.png"
               alt="Sign Up Illustration"
               fill
               className="object-contain"
