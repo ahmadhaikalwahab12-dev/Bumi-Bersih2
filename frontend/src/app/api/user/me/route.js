@@ -1,37 +1,29 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
 
-// WAJIB agar tidak dieksekusi saat build
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
+/* =====================
+   GET USER PROFILE
+===================== */
 export async function GET() {
   try {
-    if (!JWT_SECRET) {
-      console.error("JWT_SECRET belum diset");
-      return NextResponse.json(
-        { error: "Server configuration error" },
-        { status: 500 }
-      );
-    }
-
-    const cookieStore = cookies(); // TIDAK async
+    const cookieStore = await cookies();
     const session = cookieStore.get("session")?.value;
 
     if (!session) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded = jwt.verify(session, JWT_SECRET);
+    const userId = Number(session);
+    if (isNaN(userId)) {
+      return NextResponse.json({ error: "Invalid session" }, { status: 401 });
+    }
 
     const user = await prisma.user.findUnique({
-      where: { email: decoded.email },
+      where: { id: userId },
       select: {
         id: true,
         name: true,
@@ -43,18 +35,56 @@ export async function GET() {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     return NextResponse.json(user);
   } catch (error) {
     console.error("GET /api/user/me error:", error);
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+}
+
+/* =====================
+   UPDATE USER PROFILE
+===================== */
+export async function PUT(req) {
+  try {
+    const cookieStore = await cookies();
+    const session = cookieStore.get("session")?.value;
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userId = Number(session);
+    if (isNaN(userId)) {
+      return NextResponse.json({ error: "Invalid session" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { username, avatar } = body;
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(username && { username }),
+        ...(avatar && { avatar }),
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        avatar: true,
+      },
+    });
+
+    return NextResponse.json(updatedUser);
+  } catch (error) {
+    console.error("PUT /api/user/me error:", error);
     return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
+      { error: "Failed to update profile" },
+      { status: 500 }
     );
   }
 }

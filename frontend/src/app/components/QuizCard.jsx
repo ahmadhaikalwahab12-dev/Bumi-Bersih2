@@ -47,7 +47,7 @@ function CardItem({
         {/* IMAGE - UKURAN TETAP W=387 H=296 */}
         <div
           onClick={() => setIsZoomOpen(true)}
-          className="w-full h-[296px] bg-gray-100 cursor-pointer relative overflow-hidden"
+          className="w-125 h-[298px] bg-gray-100 cursor-pointer relative overflow-hidden"
         >
           {imageUrl ? (
             <Image

@@ -5,6 +5,8 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import fs from "fs";
 import path from "path";
+import { cookies } from "next/headers";
+
 
 /* GET - LIST FANWORKS / LIKED FANWORKS */
 export async function GET(req) {
@@ -130,8 +132,25 @@ export async function GET(req) {
 /* POST - UPLOAD FANWORK */
 export async function POST(req) {
   try {
-    const formData = await req.formData();
+    const cookieStore = await cookies();
+    const session = cookieStore.get("session")?.value;
 
+    if (!session) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const userId = Number(session);
+    if (isNaN(userId)) {
+      return NextResponse.json(
+        { success: false, message: "Invalid session" },
+        { status: 401 }
+      );
+    }
+
+    const formData = await req.formData();
     const title = formData.get("title");
     const description = formData.get("description");
     const image = formData.get("image");
@@ -143,7 +162,7 @@ export async function POST(req) {
       );
     }
 
-    // SIMPAN FILE 
+    /* SIMPAN FILE */
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
@@ -158,22 +177,7 @@ export async function POST(req) {
 
     const imageUrl = `/uploads/fanworks/${fileName}`;
 
-    // CARI ATAU BUAT USER DEMO 
-    let user = await prisma.user.findUnique({
-      where: { email: "demo@fanwork.com" },
-    });
-
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          name: "Verdinanda56",
-          email: "demo@fanwork.com",
-          password: "demo123",
-        },
-      });
-    }
-
-    //  SIMPAN DB 
+    /* 🔥 PAKAI USER LOGIN, BUKAN DEMO */
     const fanwork = await prisma.fanwork.create({
       data: {
         title,
@@ -183,7 +187,7 @@ export async function POST(req) {
         imageType: image.type,
         isPublished: true,
         status: "PUBLISHED",
-        userId: user.id,
+        userId: userId, // ✅ INI KUNCINYA
       },
     });
 
@@ -200,6 +204,7 @@ export async function POST(req) {
     );
   }
 }
+
 
 /* PUT - UPDATE FANWORK */
 export async function PUT(req) {

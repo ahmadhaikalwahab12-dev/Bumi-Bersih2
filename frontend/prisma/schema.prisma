@@ -3,9 +3,10 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 
 //////////////////////////////////////////////
 // USER
@@ -43,11 +44,7 @@ model Fanwork {
   status      String  @default("DRAFT") // DRAFT | PUBLISHED | REJECTED
 
   userId Int
-  user   User @relation(
-    fields:     [userId],
-    references: [id],
-    onDelete:   Cascade
-  )
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   likes    Like[]
   comments Comment[]
@@ -69,17 +66,8 @@ model Like {
   userId    Int
   fanworkId Int
 
-  user User @relation(
-    fields:     [userId],
-    references: [id],
-    onDelete:   Cascade
-  )
-
-  fanwork Fanwork @relation(
-    fields:     [fanworkId],
-    references: [id],
-    onDelete:   Cascade
-  )
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fanwork Fanwork @relation(fields: [fanworkId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
@@ -98,17 +86,8 @@ model Comment {
   userId    Int
   fanworkId Int
 
-  user User @relation(
-    fields:     [userId],
-    references: [id],
-    onDelete:   Cascade
-  )
-
-  fanwork Fanwork @relation(
-    fields:     [fanworkId],
-    references: [id],
-    onDelete:   Cascade
-  )
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fanwork Fanwork @relation(fields: [fanworkId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

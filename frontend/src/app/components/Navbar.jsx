@@ -22,6 +22,7 @@ export default function Navbar() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const toggleProfile = () => setIsProfileOpen(!isProfileOpen);
+  const [avatar, setAvatar] = useState(null);
 
   /* 🔐 CEK SESSION */
   useEffect(() => {
@@ -32,15 +33,34 @@ export default function Navbar() {
           credentials: "include",
           cache: "no-store",
         });
-        setIsLoggedIn(res.status === 200);
+
+        if (res.status === 200) {
+          setIsLoggedIn(true);
+
+          // 🔥 AMBIL DATA USER
+          const userRes = await fetch("/api/user/me", {
+            credentials: "include",
+            cache: "no-store",
+          });
+
+          if (userRes.ok) {
+            const user = await userRes.json();
+            setAvatar(user.avatar || null);
+          }
+        } else {
+          setIsLoggedIn(false);
+          setAvatar(null);
+        }
       } catch {
         setIsLoggedIn(false);
+        setAvatar(null);
       } finally {
         setIsLoading(false);
       }
     };
+
     checkAuth();
-  }, []);
+  }, [pathname]);
 
   /* 🚪 SIGN OUT */
   const handleLogout = async () => {
@@ -83,7 +103,6 @@ export default function Navbar() {
     <nav className="fixed top-0 w-full bg-[#66AC6E] shadow-md z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-
           {/* LOGO */}
           <Link href="/" className="flex items-center">
             <Image src="/icon/logo.svg" width={60} height={40} alt="logo" />
@@ -101,17 +120,31 @@ export default function Navbar() {
 
               {isDropdownOpen && (
                 <div className="absolute top-full left-0 mt-3 bg-white rounded-xl shadow-lg py-2 w-52">
-                  <Link href="/" className="block px-4 py-2 hover:bg-gray-100">Home</Link>
-                  <Link href="/what-to-do" className="block px-4 py-2 hover:bg-gray-100">What To Do</Link>
-                  <Link href="/zero-waste-lifestyle" className="block px-4 py-2 hover:bg-gray-100">
+                  <Link href="/" className="block px-4 py-2 hover:bg-gray-100">
+                    Home
+                  </Link>
+                  <Link
+                    href="/what-to-do"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    What To Do
+                  </Link>
+                  <Link
+                    href="/zero-waste-lifestyle"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
                     Zero Waste Lifestyle
                   </Link>
                 </div>
               )}
             </li>
 
-            <Link href="/recycle-bay" className="text-white font-medium">Recycle Bay</Link>
-            <Link href="/fanwork" className="text-white font-medium">Fanwork</Link>
+            <Link href="/recycle-bay" className="text-white font-medium">
+              Recycle Bay
+            </Link>
+            <Link href="/fanwork" className="text-white font-medium">
+              Fanwork
+            </Link>
           </ul>
 
           {/* 🔍 SEARCH BAR KHUSUS FANWORK */}
@@ -145,12 +178,24 @@ export default function Navbar() {
                   onClick={toggleProfile}
                   className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-white"
                 >
-                  <Image src="/icon/profil.svg" width={40} height={40} alt="Profile" />
+                  <Image
+                    src={avatar || "/icon/profil.svg"}
+                    width={40}
+                    height={40}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    unoptimized={
+                      typeof avatar === "string" && avatar.startsWith("http")
+                    }
+                  />
                 </button>
 
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-3 w-44 bg-white rounded-xl shadow-xl py-2">
-                    <Link href="/profile" className="block px-4 py-2 hover:bg-gray-100">
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
                       Profile
                     </Link>
                     <button
