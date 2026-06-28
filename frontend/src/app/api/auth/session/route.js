@@ -1,35 +1,39 @@
-import { Buffer } from "buffer";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { admin } from "@/lib/firebase-admin";
 
 export async function POST(req) {
   try {
     const { token } = await req.json();
+    if (!token) return new Response("Token required", { status: 400 });
 
-    // Decode JWT payload
-    const payload = token.split(".")[1];
-    const decoded = JSON.parse(
-      Buffer.from(payload, "base64").toString("utf-8")
-    );
+    // ✅ Verify Firebase ID Token (bukan JWT biasa)
+    const decoded = await admin.auth().verifyIdToken(token);
 
-    // Ambil email dari token
-    const email = decoded.email;
+    const { email, name, picture, uid } = decoded;
 
-    if (!email) {
-      return new Response("Invalid token", { status: 401 });
-    }
+    if (!email) return new Response("Invalid token", { status: 401 });
 
-    // Cari user di Prisma
-    const user = await prisma.user.findUnique({
+    // ✅ Upsert user ke Prisma (buat kalau belum ada)
+    const user = await prisma.user.upsert({
       where: { email },
+      update: {
+        name: name || undefined,
+        avatar: picture || undefined,
+      },
+      create: {
+        email,
+        name: name || email.split("@")[0],
+        username: email.split("@")[0],
+        avatar: picture || null,
+        password: "",
+      },
     });
 
-    if (!user) {
-      return new Response("User not found", { status: 404 });
-    }
+    const cookieStore = await cookies();
 
-    // SET COOKIE SESSION
-    cookies().set("session", token, {
+    // ✅ Simpan userId ke cookie session
+    cookieStore.set("session", user.id.toString(), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -37,8 +41,7 @@ export async function POST(req) {
       path: "/",
     });
 
-    // SET COOKIE userId (INI KUNCI)
-    cookies().set("userId", user.id.toString(), {
+    cookieStore.set("userId", user.id.toString(), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -52,10 +55,11 @@ export async function POST(req) {
         id: user.id,
         name: user.name,
         email: user.email,
+        avatar: user.avatar,
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("SESSION ERROR:", error);
     return new Response("Unauthorized", { status: 401 });
   }
 }

@@ -3,23 +3,31 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import fs from "fs";
-import path from "path";
 import { cookies } from "next/headers";
+import { v2 as cloudinary } from "cloudinary";
 
+/* =========================
+   CLOUDINARY CONFIG
+========================= */
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-/* GET - LIST FANWORKS / LIKED FANWORKS */
+/* =========================
+   GET FANWORKS
+========================= */
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const filter = searchParams.get("filter"); // 
-    const userId = searchParams.get("userId"); // 
+    const filter = searchParams.get("filter");
+    const userId = searchParams.get("userId");
 
-    // JIKA FILTER = "liked", AMBIL FANWORKS YANG DI-LIKE USER
     if (filter === "liked") {
       if (!userId) {
         return NextResponse.json(
-          { success: false, message: "User ID diperlukan untuk filter liked" },
+          { success: false, message: "User ID diperlukan" },
           { status: 400 }
         );
       }
@@ -28,98 +36,30 @@ export async function GET(req) {
         where: {
           isPublished: true,
           likes: {
-            some: {
-              userId: parseInt(userId)
-            }
-          }
+            some: { userId: Number(userId) },
+          },
         },
         include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            }
-          },
-          _count: {
-            select: {
-              likes: true,
-              comments: true
-            }
-          },
+          user: { select: { id: true, name: true } },
+          _count: { select: { likes: true, comments: true } },
           comments: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                }
-              }
-            },
-            orderBy: {
-              createdAt: "desc"
-            }
-          }
+            include: { user: { select: { id: true, name: true } } },
+            orderBy: { createdAt: "desc" },
+          },
         },
         orderBy: { createdAt: "desc" },
       });
 
-      const transformedData = likedFanworks.map(work => ({
-        id: work.id,
-        title: work.title,
-        description: work.description,
-        imageUrl: work.imageUrl,
-        user: {
-          name: work.user?.name || "User"
-        },
-        _count: {
-          likes: work._count.likes,
-          comments: work._count.comments
-        },
-        comments: work.comments,
-        createdAt: work.createdAt,
-        updatedAt: work.updatedAt
-      }));
-
-      return NextResponse.json({
-        success: true,
-        data: transformedData,
-      });
+      return NextResponse.json({ success: true, data: likedFanworks });
     }
 
-    // DEFAULT: AMBIL SEMUA FANWORKS (TANPA FILTER)
     const fanworks = await prisma.fanwork.findMany({
-      where: {
-        isPublished: true,
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          }
-        }
-      },
+      where: { isPublished: true },
+      include: { user: { select: { id: true, name: true } } },
       orderBy: { createdAt: "desc" },
     });
 
-    const transformedData = fanworks.map(work => ({
-      id: work.id,
-      title: work.title,
-      description: work.description,
-      imageUrl: work.imageUrl,
-      user: {
-        name: work.user?.name || "User"
-      },
-      createdAt: work.createdAt,
-      updatedAt: work.updatedAt
-    }));
-
-    return NextResponse.json({
-      success: true,
-      data: transformedData,
-    });
+    return NextResponse.json({ success: true, data: fanworks });
   } catch (error) {
     console.error("GET FANWORK ERROR:", error);
     return NextResponse.json(
@@ -129,23 +69,18 @@ export async function GET(req) {
   }
 }
 
-/* POST - UPLOAD FANWORK */
+/* =========================
+   POST FANWORK (UPLOAD)
+========================= */
 export async function POST(req) {
   try {
-    const cookieStore = await cookies();
+    const cookieStore = await cookies(); // ✅ WAJIB await
     const session = cookieStore.get("session")?.value;
+    const userId = Number(session);
 
-    if (!session) {
+    if (!session || isNaN(userId)) {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-
-    const userId = Number(session);
-    if (isNaN(userId)) {
-      return NextResponse.json(
-        { success: false, message: "Invalid session" },
         { status: 401 }
       );
     }
@@ -155,47 +90,39 @@ export async function POST(req) {
     const description = formData.get("description");
     const image = formData.get("image");
 
-    if (!title || !description || !image) {
+    if (!title || !description || !(image instanceof File)) {
       return NextResponse.json(
         { success: false, message: "Data tidak lengkap" },
         { status: 400 }
       );
     }
 
-    /* SIMPAN FILE */
-    const bytes = await image.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const buffer = Buffer.from(await image.arrayBuffer());
+    
+    const uploadResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: "fanworks", resource_type: "image" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(buffer);
+    });
 
-    const fileName = `${Date.now()}-${image.name}`;
-    const uploadDir = path.join(process.cwd(), "public/uploads/fanworks");
-
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    fs.writeFileSync(path.join(uploadDir, fileName), buffer);
-
-    const imageUrl = `/uploads/fanworks/${fileName}`;
-
-    /* 🔥 PAKAI USER LOGIN, BUKAN DEMO */
     const fanwork = await prisma.fanwork.create({
       data: {
         title,
         description,
-        imageUrl,
+        imageUrl: uploadResult.secure_url,
         imageSize: image.size,
         imageType: image.type,
         isPublished: true,
         status: "PUBLISHED",
-        userId: userId, // ✅ INI KUNCINYA
+        userId,
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      message: "Fanwork berhasil diunggah!",
-      data: fanwork,
-    });
+    return NextResponse.json({ success: true, data: fanwork });
   } catch (error) {
     console.error("POST FANWORK ERROR:", error);
     return NextResponse.json(
@@ -206,12 +133,13 @@ export async function POST(req) {
 }
 
 
-/* PUT - UPDATE FANWORK */
+/* =========================
+   PUT FANWORK (UPDATE)
+========================= */
 export async function PUT(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-    const fanworkId = parseInt(id);
+    const fanworkId = Number(searchParams.get("id"));
 
     if (!fanworkId || isNaN(fanworkId)) {
       return NextResponse.json(
@@ -225,64 +153,43 @@ export async function PUT(req) {
     const description = formData.get("description");
     const image = formData.get("image");
 
-    if (!title || !description) {
-      return NextResponse.json(
-        { success: false, message: "Judul dan deskripsi harus diisi" },
-        { status: 400 }
-      );
-    }
-
-    // CEK FANWORK ADA ATAU TIDAK 
-    const existingFanwork = await prisma.fanwork.findUnique({
+    const existing = await prisma.fanwork.findUnique({
       where: { id: fanworkId },
     });
 
-    if (!existingFanwork) {
+    if (!existing) {
       return NextResponse.json(
         { success: false, message: "Fanwork tidak ditemukan" },
         { status: 404 }
       );
     }
 
-    let imageUrl = existingFanwork.imageUrl;
-    let imageSize = existingFanwork.imageSize;
-    let imageType = existingFanwork.imageType;
+    let imageUrl = existing.imageUrl;
+    let imageSize = existing.imageSize;
+    let imageType = existing.imageType;
 
-    // JIKA ADA GAMBAR BARU, UPLOAD DAN HAPUS YANG LAMA 
-    if (image && image.size > 0) {
-      // Hapus gambar lama
-      if (existingFanwork.imageUrl) {
-        try {
-          const oldImagePath = path.join(process.cwd(), "public", existingFanwork.imageUrl);
-          if (fs.existsSync(oldImagePath)) {
-            fs.unlinkSync(oldImagePath);
-            console.log(`Old image deleted: ${oldImagePath}`);
+    if (image && image instanceof File && image.size > 0) {
+      const buffer = Buffer.from(await image.arrayBuffer());
+
+      const uploadResult = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            folder: "fanworks",
+            resource_type: "image",
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
           }
-        } catch (err) {
-          console.error("Error deleting old image:", err);
-        }
-      }
+        ).end(buffer);
+      });
 
-      // Upload gambar baru
-      const bytes = await image.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const fileName = `${Date.now()}-${image.name}`;
-      const uploadDir = path.join(process.cwd(), "public/uploads/fanworks");
-
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-
-      fs.writeFileSync(path.join(uploadDir, fileName), buffer);
-      
-      imageUrl = `/uploads/fanworks/${fileName}`;
+      imageUrl = uploadResult.secure_url;
       imageSize = image.size;
       imageType = image.type;
     }
 
-    // UPDATE DATABASE 
-    const updatedFanwork = await prisma.fanwork.update({
+    const updated = await prisma.fanwork.update({
       where: { id: fanworkId },
       data: {
         title,
@@ -294,32 +201,23 @@ export async function PUT(req) {
       },
     });
 
-    console.log(`Fanwork updated: ID ${fanworkId}`);
-
-    return NextResponse.json({
-      success: true,
-      message: "Fanwork berhasil diupdate!",
-      data: updatedFanwork,
-    });
+    return NextResponse.json({ success: true, data: updated });
   } catch (error) {
-    console.error("UPDATE FANWORK ERROR:", error);
+    console.error("PUT FANWORK ERROR:", error);
     return NextResponse.json(
-      {
-        success: false,
-        message: "Gagal mengupdate fanwork",
-        error: error.message,
-      },
+      { success: false, message: "Gagal update fanwork" },
       { status: 500 }
     );
   }
 }
 
-/* DELETE - HAPUS FANWORK */
+/* =========================
+   DELETE FANWORK
+========================= */
 export async function DELETE(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-    const fanworkId = parseInt(id);
+    const fanworkId = Number(searchParams.get("id"));
 
     if (!fanworkId || isNaN(fanworkId)) {
       return NextResponse.json(
@@ -328,53 +226,18 @@ export async function DELETE(req) {
       );
     }
 
-    // CEK APAKAH FANWORK ADA 
-    const fanwork = await prisma.fanwork.findUnique({
-      where: { id: fanworkId },
-    });
-
-    if (!fanwork) {
-      return NextResponse.json(
-        { success: false, message: "Fanwork tidak ditemukan" },
-        { status: 404 }
-      );
-    }
-
-    // HAPUS FILE GAMBAR DARI SERVER 
-    if (fanwork.imageUrl) {
-      try {
-        const imagePath = path.join(process.cwd(), "public", fanwork.imageUrl);
-        
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-          console.log(`Image deleted: ${imagePath}`);
-        }
-      } catch (fileError) {
-        console.error("Error deleting image file:", fileError);
-      }
-    }
-
-    // HAPUS DARI DATABASE 
     await prisma.fanwork.delete({
       where: { id: fanworkId },
     });
 
-    console.log(`Fanwork deleted: ID ${fanworkId}`);
-
     return NextResponse.json({
       success: true,
       message: "Fanwork berhasil dihapus",
-      deletedId: fanworkId,
     });
   } catch (error) {
     console.error("DELETE FANWORK ERROR:", error);
-
     return NextResponse.json(
-      {
-        success: false,
-        message: "Gagal menghapus fanwork",
-        error: error.message,
-      },
+      { success: false, message: "Gagal menghapus fanwork" },
       { status: 500 }
     );
   }

@@ -12,19 +12,12 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  // 🔍 SEARCH STATE (TAMBAHAN)
   const [search, setSearch] = useState("");
+  const [avatar, setAvatar] = useState(null);
 
   const pathname = usePathname();
   const router = useRouter();
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-  const toggleProfile = () => setIsProfileOpen(!isProfileOpen);
-  const [avatar, setAvatar] = useState(null);
-
-  /* 🔐 CEK SESSION */
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -33,16 +26,12 @@ export default function Navbar() {
           credentials: "include",
           cache: "no-store",
         });
-
         if (res.status === 200) {
           setIsLoggedIn(true);
-
-          // 🔥 AMBIL DATA USER
           const userRes = await fetch("/api/user/me", {
             credentials: "include",
             cache: "no-store",
           });
-
           if (userRes.ok) {
             const user = await userRes.json();
             setAvatar(user.avatar || null);
@@ -58,26 +47,20 @@ export default function Navbar() {
         setIsLoading(false);
       }
     };
-
     checkAuth();
   }, [pathname]);
 
-  /* 🚪 SIGN OUT */
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
     setIsLoggedIn(false);
     setIsProfileOpen(false);
     router.push("/sign-in");
   };
 
-  // 🔍 HANDLE SEARCH (TAMBAHAN)
   const handleSearch = (e) => {
     e.preventDefault();
     if (!search.trim()) return;
-    router.push(`/fanwork?search=${encodeURIComponent(search)}`);
+    router.push(`/recycle-craft?search=${encodeURIComponent(search)}`);
   };
 
   if (
@@ -85,9 +68,7 @@ export default function Navbar() {
     pathname === "/sign-up" ||
     pathname === "/signin-berhasil" ||
     pathname === "/signup-berhasil"
-  ) {
-    return null;
-  }
+  ) return null;
 
   if (isLoading) {
     return (
@@ -103,6 +84,7 @@ export default function Navbar() {
     <nav className="fixed top-0 w-full bg-[#66AC6E] shadow-md z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+
           {/* LOGO */}
           <Link href="/" className="flex items-center">
             <Image src="/icon/logo.svg" width={60} height={40} alt="logo" />
@@ -112,51 +94,35 @@ export default function Navbar() {
           <ul className="hidden md:flex space-x-8 items-center">
             <li className="relative">
               <button
-                onClick={toggleDropdown}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="flex items-center gap-1 text-white font-medium"
               >
                 Home <ChevronDown size={16} />
               </button>
-
               {isDropdownOpen && (
                 <div className="absolute top-full left-0 mt-3 bg-white rounded-xl shadow-lg py-2 w-52">
-                  <Link href="/" className="block px-4 py-2 hover:bg-gray-100">
-                    Home
-                  </Link>
-                  <Link
-                    href="/what-to-do"
-                    className="block px-4 py-2 hover:bg-gray-100"
-                  >
-                    What To Do
-                  </Link>
-                  <Link
-                    href="/zero-waste-lifestyle"
-                    className="block px-4 py-2 hover:bg-gray-100"
-                  >
-                    Zero Waste Lifestyle
-                  </Link>
+                  <Link href="/" className="block px-4 py-2 hover:bg-gray-100">Home</Link>
+                  <Link href="/what-to-do" className="block px-4 py-2 hover:bg-gray-100">What To Do</Link>
+                  <Link href="/zero-waste-lifestyle" className="block px-4 py-2 hover:bg-gray-100">Zero Waste Lifestyle</Link>
+                  <Link href="/recycle-craft" className="block px-4 py-2 hover:bg-gray-100">Recycle Craft</Link>
                 </div>
               )}
             </li>
-
-            <Link href="/recycle-bay" className="text-white font-medium">
-              Recycle Bay
-            </Link>
-            <Link href="/fanwork" className="text-white font-medium">
-              Fanwork
-            </Link>
+            <Link href="/recycle-bay" className="text-white font-medium">Recycle Bay</Link>
+            <Link href="/fanwork" className="text-white font-medium">Fanwork</Link>
+            <Link href="/recycle-craft" className="text-white font-medium">Recycle Craft</Link>
           </ul>
 
-          {/* 🔍 SEARCH BAR KHUSUS FANWORK */}
-          {pathname === "/fanwork" && (
+          {/* SEARCH BAR KHUSUS RECYCLE CRAFT */}
+          {pathname === "/recycle-craft" && (
             <form
               onSubmit={handleSearch}
-              className="hidden md:flex items-center bg-white rounded-lg px-3 py-1 w-[320px]"
+              className="hidden md:flex items-center bg-white rounded-lg px-3 py-1 w-[280px]"
             >
               <Search size={18} className="text-gray-400 mr-2" />
               <input
                 type="text"
-                placeholder="Ketik untuk mencari di Fanwork..."
+                placeholder="Cari karya..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full outline-none text-sm"
@@ -175,7 +141,7 @@ export default function Navbar() {
             ) : (
               <div className="relative">
                 <button
-                  onClick={toggleProfile}
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-white"
                 >
                   <Image
@@ -184,20 +150,13 @@ export default function Navbar() {
                     height={40}
                     alt="Profile"
                     className="w-full h-full object-cover"
-                    unoptimized={
-                      typeof avatar === "string" && avatar.startsWith("http")
-                    }
+                    unoptimized={typeof avatar === "string" && avatar.startsWith("http")}
                   />
                 </button>
-
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-3 w-44 bg-white rounded-xl shadow-xl py-2">
-                    <Link
-                      href="/profile"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                    >
-                      Profile
-                    </Link>
+                    <Link href="/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</Link>
+                    <Link href="/my-crafts" className="block px-4 py-2 hover:bg-gray-100">Karya Saya</Link>
                     <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
@@ -211,10 +170,31 @@ export default function Navbar() {
           </div>
 
           {/* MOBILE TOGGLE */}
-          <button onClick={toggleMenu} className="md:hidden text-white">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-white">
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+
+        {/* MOBILE MENU */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-[#66AC6E] pb-4 space-y-2">
+            <Link href="/" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Home</Link>
+            <Link href="/what-to-do" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">What To Do</Link>
+            <Link href="/zero-waste-lifestyle" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Zero Waste Lifestyle</Link>
+            <Link href="/recycle-bay" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Recycle Bay</Link>
+            <Link href="/fanwork" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Fanwork</Link>
+            <Link href="/recycle-craft" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Recycle Craft</Link>
+            {!isLoggedIn ? (
+              <Link href="/sign-in" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Sign In</Link>
+            ) : (
+              <>
+                <Link href="/profile" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Profile</Link>
+                <Link href="/my-crafts" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Karya Saya</Link>
+                <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-red-200 hover:bg-white/10 rounded-lg">Sign Out</button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );

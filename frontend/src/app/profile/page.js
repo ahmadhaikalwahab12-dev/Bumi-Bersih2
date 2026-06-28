@@ -59,7 +59,7 @@ export default function ProfileEditPage() {
         credentials: "include",
         body: JSON.stringify({
           username,
-          avatar: profileImage || undefined, // ✅ FIX FIELD
+          avatar: profileImage || undefined, //
         }),
       });
 
