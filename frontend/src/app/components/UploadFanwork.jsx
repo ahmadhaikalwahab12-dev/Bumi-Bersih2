@@ -16,27 +16,24 @@ export default function UploadFanwork({ onClose, onSuccess }) {
 
   const fileInputRef = useRef(null);
 
-  // Handle file selection dengan preview
   const handleFileChange = (e) => {
     const selectedFile = e.target.files?.[0];
-    
+
     if (!selectedFile) return;
 
-    // Validasi tipe file
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     if (!allowedTypes.includes(selectedFile.type)) {
-      setAlert({ 
-        type: "error", 
-        message: "Format tidak didukung. Gunakan JPG, PNG, GIF, atau WEBP" 
+      setAlert({
+        type: "error",
+        message: "Format tidak didukung. Gunakan JPG, PNG, GIF, atau WEBP",
       });
       return;
     }
 
-    // Validasi ukuran (12MB)
     if (selectedFile.size > 12 * 1024 * 1024) {
-      setAlert({ 
-        type: "error", 
-        message: "Ukuran file maksimal 12MB" 
+      setAlert({
+        type: "error",
+        message: "Ukuran file maksimal 12MB",
       });
       return;
     }
@@ -44,7 +41,6 @@ export default function UploadFanwork({ onClose, onSuccess }) {
     setFile(selectedFile);
     setAlert({ type: "", message: "" });
 
-    // Create preview
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result);
@@ -52,9 +48,7 @@ export default function UploadFanwork({ onClose, onSuccess }) {
     reader.readAsDataURL(selectedFile);
   };
 
-  // Handle upload
   const handleUpload = async () => {
-    // Validasi form
     if (!title.trim()) {
       setAlert({ type: "error", message: "Judul wajib diisi!" });
       return;
@@ -87,6 +81,7 @@ export default function UploadFanwork({ onClose, onSuccess }) {
       const res = await fetch("/api/fanworks", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
 
       let data = null;
@@ -97,41 +92,38 @@ export default function UploadFanwork({ onClose, onSuccess }) {
       }
 
       if (!res.ok) {
+        if (res.status === 401) {
+          throw new Error("Sesi login habis. Silakan login kembali.");
+        }
         throw new Error(data?.message || "Upload gagal");
       }
 
-      // Success
-      setAlert({ 
-        type: "success", 
-        message: "🎉 Karya berhasil diunggah!" 
+      setAlert({
+        type: "success",
+        message: "🎉 Karya berhasil diunggah!",
       });
 
-      // TAMPILKAN NOTIFIKASI
       setShowNotif(true);
       setTimeout(() => setShowNotif(false), 3000);
 
-      // Reset form
       setTitle("");
       setDesc("");
       setFile(null);
       setPreview(null);
       setIsAgree(false);
 
-      // Callback success (untuk refresh list)
       if (onSuccess) {
         onSuccess(data.data);
       }
 
-      // Tutup modal setelah 2 detik
       setTimeout(() => {
         onClose?.();
       }, 2000);
-
     } catch (err) {
       console.error("Upload error:", err);
-      setAlert({ 
-        type: "error", 
-        message: err.message || "Terjadi kesalahan saat upload" 
+      setAlert({
+        type: "error",
+        message: err.message || "Terjadi kesalahan saat upload",
       });
     } finally {
       setLoading(false);
@@ -140,14 +132,10 @@ export default function UploadFanwork({ onClose, onSuccess }) {
 
   return (
     <>
-      {/* NOTIFIKASI GLOBAL */}
       <Notifikasi show={showNotif} message="🎉 Karya berhasil diupload!" />
 
       <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center px-4">
-        {/* MODAL - Added overflow-y-auto and max-height */}
         <div className="bg-[#6EAD75] w-full max-w-2xl rounded-3xl shadow-xl p-10 relative max-h-[90vh] overflow-y-auto">
-          
-          {/* CLOSE BUTTON */}
           <button
             onClick={onClose}
             disabled={loading}
@@ -156,12 +144,11 @@ export default function UploadFanwork({ onClose, onSuccess }) {
             ✕
           </button>
 
-          {/* NOTIFICATION */}
           {alert.message && (
-            <div 
+            <div
               className={`mb-6 px-4 py-3 rounded-lg text-center font-semibold ${
-                alert.type === "success" 
-                  ? "bg-green-600 text-white" 
+                alert.type === "success"
+                  ? "bg-green-600 text-white"
                   : "bg-red-500 text-white"
               }`}
             >
@@ -169,14 +156,11 @@ export default function UploadFanwork({ onClose, onSuccess }) {
             </div>
           )}
 
-          {/* HEADER */}
           <h1 className="text-center text-4xl font-bold text-white mb-10">
             Unggah <span className="text-[#E3B214]">Karya</span>
           </h1>
 
           <div className="space-y-6">
-            
-            {/* JUDUL */}
             <div>
               <label className="text-sm font-semibold text-white">
                 Judul fanwork <span className="text-[#E3B214]">*</span>
@@ -190,12 +174,9 @@ export default function UploadFanwork({ onClose, onSuccess }) {
                 disabled={loading}
                 maxLength={200}
               />
-              <p className="text-xs text-white/70 mt-1">
-                {title.length}/200 karakter
-              </p>
+              <p className="text-xs text-white/70 mt-1">{title.length}/200 karakter</p>
             </div>
 
-            {/* DESKRIPSI */}
             <div>
               <label className="text-sm font-semibold text-white">
                 Deskripsi fanwork <span className="text-[#E3B214]">*</span>
@@ -208,12 +189,9 @@ export default function UploadFanwork({ onClose, onSuccess }) {
                 disabled={loading}
                 maxLength={1000}
               />
-              <p className="text-xs text-white/70 mt-1">
-                {desc.length}/1000 karakter
-              </p>
+              <p className="text-xs text-white/70 mt-1">{desc.length}/1000 karakter</p>
             </div>
 
-            {/* UPLOAD GAMBAR */}
             <div>
               <label className="text-sm font-semibold text-white">
                 Gambar fanwork <span className="text-[#E3B214]">*</span>
@@ -222,13 +200,12 @@ export default function UploadFanwork({ onClose, onSuccess }) {
                 Maksimal 12MB (JPG, PNG, GIF, WEBP)
               </p>
 
-              {/* Preview atau Upload Area */}
               {preview ? (
                 <div className="mt-3 relative rounded-xl overflow-hidden">
-                  {/* FIX: Use regular img tag for base64 preview */}
-                  <images
-                    src={preview} 
-                    alt="Preview" 
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={preview}
+                    alt="Preview"
                     className="w-full h-64 object-cover rounded-xl"
                   />
                   <button
@@ -252,20 +229,13 @@ export default function UploadFanwork({ onClose, onSuccess }) {
                 <div
                   onClick={() => !loading && fileInputRef.current?.click()}
                   className={`mt-3 border-2 border-dashed border-white rounded-xl bg-white/40 h-40 flex flex-col justify-center items-center transition ${
-                    loading 
-                      ? "cursor-not-allowed opacity-50" 
+                    loading
+                      ? "cursor-not-allowed opacity-50"
                       : "cursor-pointer hover:bg-white/50"
                   }`}
                 >
-                  <Image 
-                    src="/icon/upfan.svg" 
-                    alt="upload" 
-                    width={50} 
-                    height={50} 
-                  />
-                  <p className="text-white/90 text-sm mt-2">
-                    Klik untuk pilih gambar
-                  </p>
+                  <Image src="/icon/upfan.svg" alt="upload" width={50} height={50} />
+                  <p className="text-white/90 text-sm mt-2">Klik untuk pilih gambar</p>
                 </div>
               )}
 
@@ -279,7 +249,6 @@ export default function UploadFanwork({ onClose, onSuccess }) {
               />
             </div>
 
-            {/* AGREEMENT */}
             <div className="flex items-start mt-4">
               <input
                 type="checkbox"
@@ -301,7 +270,6 @@ export default function UploadFanwork({ onClose, onSuccess }) {
               </p>
             </div>
 
-            {/* SUBMIT BUTTON */}
             <button
               onClick={handleUpload}
               disabled={!isAgree || loading}
@@ -313,22 +281,19 @@ export default function UploadFanwork({ onClose, onSuccess }) {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg 
-                    className="animate-spin h-5 w-5" 
-                    viewBox="0 0 24 24"
-                  >
-                    <circle 
-                      className="opacity-25" 
-                      cx="12" 
-                      cy="12" 
-                      r="10" 
-                      stroke="currentColor" 
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
                       strokeWidth="4"
                       fill="none"
                     />
-                    <path 
-                      className="opacity-75" 
-                      fill="currentColor" 
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     />
                   </svg>

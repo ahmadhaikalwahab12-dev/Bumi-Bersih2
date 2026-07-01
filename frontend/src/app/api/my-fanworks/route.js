@@ -3,76 +3,40 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getSessionUser } from "@/lib/session";
 
 export async function GET() {
   try {
-    console.log("Fetching MY fanworks...");
-
-    // Find or Create Demo User
-    let user = await prisma.user.findUnique({
-      where: {
-        email: "demo@fanwork.com",
-      },
-    });
-
+    const user = await getSessionUser();
     if (!user) {
-      user = await prisma.user.create({
-        data: {
-          name: "Verdinanda56",
-          email: "demo@fanwork.com",
-          password: "demo123",
-        },
-      });
-      console.log("Demo user created");
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
     }
 
-    // Fetch User's Fanworks
     const fanworks = await prisma.fanwork.findMany({
-      where: {
-        userId: user.id,
-      },
+      where: { userId: user.id },
       include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        _count: {
-          select: {
-            likes: true,
-            comments: true,
-          },
-        },
+        user: { select: { id: true, name: true, email: true } },
+        _count: { select: { likes: true, comments: true } },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     });
 
-    console.log(`Found ${fanworks.length} fanworks for user ${user.name}`);
-
-    // Transform Data
-    const transformedData = fanworks.map(work => ({
+    const transformedData = fanworks.map((work) => ({
       id: work.id,
       title: work.title,
       description: work.description,
       imageUrl: work.imageUrl,
-      user: {
-        name: work.user?.name || "User"
-      },
+      user: { name: work.user?.name || "User" },
       createdAt: work.createdAt,
-      updatedAt: work.updatedAt
+      updatedAt: work.updatedAt,
     }));
 
-    return NextResponse.json({
-      success: true,
-      data: transformedData,
-    });
+    return NextResponse.json({ success: true, data: transformedData });
   } catch (error) {
     console.error("MY FANWORKS ERROR:", error);
-
     return NextResponse.json(
       {
         success: false,

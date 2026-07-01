@@ -3,12 +3,28 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import QuizCard from "@/app/components/QuizCard";
 import UploadFanwork from "@/app/components/UploadFanwork";
 
 export default function Fanwork() {
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const router = useRouter();
+
+  const handleUploadClick = async () => {
+    try {
+      const res = await fetch("/api/auth/check", { credentials: "include" });
+      if (res.status !== 200) {
+        alert("Silakan login dengan Google terlebih dahulu untuk mengunggah karya.");
+        router.push("/sign-in");
+        return;
+      }
+      setShowUploadModal(true);
+    } catch {
+      router.push("/sign-in");
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -31,8 +47,8 @@ export default function Fanwork() {
             </p>
 
             <p className="text-lg leading-relaxed">
-              Ayo ekspresikan kreativitas serta dukunganmu terhadap website Bumi Bersih dengan membuat sebuah karya yang terinspirasi dari maskot kami, 
-              yaitu Fora dan Fana! Tunjukkan imajinasimu melalui gambar, ilustrasi, atau kerajinan unik lainnya, 
+              Ayo ekspresikan kreativitas serta dukunganmu terhadap website Bumi Bersih dengan membuat sebuah karya yang terinspirasi dari maskot kami,
+              yaitu Fora dan Fana! Tunjukkan imajinasimu melalui gambar, ilustrasi, atau kerajinan unik lainnya,
               dan jadilah bagian dari gerakan untuk menjaga bumi tetap bersih dan lestari.
             </p>
           </div>
@@ -51,7 +67,7 @@ export default function Fanwork() {
               sizes="(max-width: 1280px) 100vw, 1280px"
             />
             <button
-              onClick={() => setShowUploadModal(true)}
+              onClick={handleUploadClick}
               className="relative z-10 mb-12 bg-[#E3B214] hover:bg-yellow-500 text-white font-bold py-3 px-12 rounded-full transition-all hover:scale-105 shadow-lg"
             >
               Upload Karyamu!

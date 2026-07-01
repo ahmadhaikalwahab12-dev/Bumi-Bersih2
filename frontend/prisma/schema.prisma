@@ -7,18 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 //////////////////////////////////////////////
 // USER
 //////////////////////////////////////////////
 model User {
-  id       Int     @id @default(autoincrement())
-  name     String
-  username String? @unique
-  email    String  @unique
-  password String
-  bio      String?
-  avatar   String?
+  id          Int     @id @default(autoincrement())
+  firebaseUid String? @unique
+  name        String
+  username    String? @unique
+  email       String  @unique
+  password    String?
+  bio         String?
+  avatar      String?
 
   fanworks Fanwork[]
   likes    Like[]
@@ -41,7 +41,7 @@ model Fanwork {
   imageType String
 
   isPublished Boolean @default(false)
-  status      String  @default("DRAFT") // DRAFT | PUBLISHED | REJECTED
+  status      String  @default("DRAFT")
 
   userId Int
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)

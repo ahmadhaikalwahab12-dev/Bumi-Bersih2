@@ -3,12 +3,9 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { cookies } from "next/headers";
 import { v2 as cloudinary } from "cloudinary";
+import { getSessionUser } from "@/lib/session";
 
-/* =========================
-   CLOUDINARY CONFIG
-========================= */
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -22,22 +19,20 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const filter = searchParams.get("filter");
-    const userId = searchParams.get("userId");
 
     if (filter === "liked") {
-      if (!userId) {
+      const user = await getSessionUser();
+      if (!user) {
         return NextResponse.json(
-          { success: false, message: "User ID diperlukan" },
-          { status: 400 }
+          { success: false, message: "Unauthorized" },
+          { status: 401 }
         );
       }
 
       const likedFanworks = await prisma.fanwork.findMany({
         where: {
           isPublished: true,
-          likes: {
-            some: { userId: Number(userId) },
-          },
+          likes: { some: { userId: user.id } },
         },
         include: {
           user: { select: { id: true, name: true } },
@@ -74,11 +69,8 @@ export async function GET(req) {
 ========================= */
 export async function POST(req) {
   try {
-    const cookieStore = await cookies(); // ✅ WAJIB await
-    const session = cookieStore.get("session")?.value;
-    const userId = Number(session);
-
-    if (!session || isNaN(userId)) {
+    const user = await getSessionUser();
+    if (!user) {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
         { status: 401 }
@@ -98,15 +90,17 @@ export async function POST(req) {
     }
 
     const buffer = Buffer.from(await image.arrayBuffer());
-    
+
     const uploadResult = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        { folder: "fanworks", resource_type: "image" },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      ).end(buffer);
+      cloudinary.uploader
+        .upload_stream(
+          { folder: "fanworks", resource_type: "image" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        )
+        .end(buffer);
     });
 
     const fanwork = await prisma.fanwork.create({
@@ -118,7 +112,7 @@ export async function POST(req) {
         imageType: image.type,
         isPublished: true,
         status: "PUBLISHED",
-        userId,
+        userId: user.id,
       },
     });
 
@@ -132,12 +126,19 @@ export async function POST(req) {
   }
 }
 
-
 /* =========================
    PUT FANWORK (UPDATE)
 ========================= */
 export async function PUT(req) {
   try {
+    const user = await getSessionUser();
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const fanworkId = Number(searchParams.get("id"));
 
@@ -147,11 +148,6 @@ export async function PUT(req) {
         { status: 400 }
       );
     }
-
-    const formData = await req.formData();
-    const title = formData.get("title");
-    const description = formData.get("description");
-    const image = formData.get("image");
 
     const existing = await prisma.fanwork.findUnique({
       where: { id: fanworkId },
@@ -164,6 +160,18 @@ export async function PUT(req) {
       );
     }
 
+    if (existing.userId !== user.id) {
+      return NextResponse.json(
+        { success: false, message: "Bukan pemilik fanwork ini" },
+        { status: 403 }
+      );
+    }
+
+    const formData = await req.formData();
+    const title = formData.get("title");
+    const description = formData.get("description");
+    const image = formData.get("image");
+
     let imageUrl = existing.imageUrl;
     let imageSize = existing.imageSize;
     let imageType = existing.imageType;
@@ -172,16 +180,15 @@ export async function PUT(req) {
       const buffer = Buffer.from(await image.arrayBuffer());
 
       const uploadResult = await new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          {
-            folder: "fanworks",
-            resource_type: "image",
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        ).end(buffer);
+        cloudinary.uploader
+          .upload_stream(
+            { folder: "fanworks", resource_type: "image" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          )
+          .end(buffer);
       });
 
       imageUrl = uploadResult.secure_url;
@@ -216,6 +223,14 @@ export async function PUT(req) {
 ========================= */
 export async function DELETE(req) {
   try {
+    const user = await getSessionUser();
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const fanworkId = Number(searchParams.get("id"));
 
@@ -226,9 +241,25 @@ export async function DELETE(req) {
       );
     }
 
-    await prisma.fanwork.delete({
+    const existing = await prisma.fanwork.findUnique({
       where: { id: fanworkId },
     });
+
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, message: "Fanwork tidak ditemukan" },
+        { status: 404 }
+      );
+    }
+
+    if (existing.userId !== user.id) {
+      return NextResponse.json(
+        { success: false, message: "Bukan pemilik fanwork ini" },
+        { status: 403 }
+      );
+    }
+
+    await prisma.fanwork.delete({ where: { id: fanworkId } });
 
     return NextResponse.json({
       success: true,
