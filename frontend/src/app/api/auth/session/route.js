@@ -1,3 +1,6 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { admin } from "@/lib/firebase-admin";
