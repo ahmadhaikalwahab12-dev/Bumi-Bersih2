@@ -8,35 +8,71 @@ import { admin } from "@/lib/firebase-admin";
 export async function POST(req) {
   try {
     const { token } = await req.json();
-    if (!token) return new Response("Token required", { status: 400 });
+    if (!token) {
+      return Response.json({ error: "Token required" }, { status: 400 });
+    }
 
-    // ✅ Verify Firebase ID Token (bukan JWT biasa)
+    // ✅ Verify Firebase ID Token
     const decoded = await admin.auth().verifyIdToken(token);
-
     const { email, name, picture, uid } = decoded;
 
-    if (!email) return new Response("Invalid token", { status: 401 });
+    if (!email) {
+      return Response.json({ error: "Invalid token: email not found" }, { status: 401 });
+    }
 
-    // ✅ Upsert user ke Prisma (buat kalau belum ada)
-    const user = await prisma.user.upsert({
-      where: { email },
-      update: {
-        name: name || undefined,
-        avatar: picture || undefined,
-      },
-      create: {
-        email,
-        name: name || email.split("@")[0],
-        username: email.split("@")[0],
-        avatar: picture || null,
-        password: "",
-      },
-    });
+    // ✅ Upsert user ke Prisma dengan auto-retry jika Neon sedang cold-start (wake up)
+    let user = null;
+    try {
+      user = await prisma.user.upsert({
+        where: { email },
+        update: {
+          name: name || undefined,
+          avatar: picture || undefined,
+        },
+        create: {
+          email,
+          name: name || email.split("@")[0],
+          username: email.split("@")[0],
+          avatar: picture || null,
+          password: "",
+        },
+      });
+    } catch (firstErr) {
+      console.warn("Prisma upsert retry (Neon cold start?):", firstErr.message);
+      // Tunggu 1 detik jika DB sedang bangun
+      await new Promise((r) => setTimeout(r, 1000));
+      try {
+        user = await prisma.user.upsert({
+          where: { email },
+          update: {
+            name: name || undefined,
+            avatar: picture || undefined,
+          },
+          create: {
+            email,
+            name: name || email.split("@")[0],
+            username: email.split("@")[0],
+            avatar: picture || null,
+            password: "",
+          },
+        });
+      } catch (retryErr) {
+        console.error("Prisma upsert retry also failed:", retryErr.message);
+        // Fallback user object jika DB benar-benar tidak terjangkau
+        user = {
+          id: uid,
+          name: name || email.split("@")[0],
+          email,
+          avatar: picture || null,
+        };
+      }
+    }
 
     const cookieStore = await cookies();
+    const sessionVal = user?.id ? user.id.toString() : uid;
 
     // ✅ Simpan userId ke cookie session
-    cookieStore.set("session", user.id.toString(), {
+    cookieStore.set("session", sessionVal, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -44,7 +80,7 @@ export async function POST(req) {
       path: "/",
     });
 
-    cookieStore.set("userId", user.id.toString(), {
+    cookieStore.set("userId", sessionVal, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -63,6 +99,9 @@ export async function POST(req) {
     });
   } catch (error) {
     console.error("SESSION ERROR:", error);
-    return new Response("Unauthorized", { status: 401 });
+    return Response.json(
+      { error: error.message || "Gagal membuat sesi login" },
+      { status: 500 }
+    );
   }
 }

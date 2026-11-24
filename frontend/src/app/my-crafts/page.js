@@ -22,6 +22,10 @@ export default function MyCraftsPage() {
   const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
+    if (!auth) {
+      setIsLoading(false);
+      return;
+    }
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
       if (u) fetchMyPosts(u.uid);

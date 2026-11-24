@@ -5,6 +5,8 @@ node_modules
 .env
 .env.local
 .env*.local
+!.env.example
+!.env*.example
 
 # Next.js build output
 .next
@@ -14,8 +16,9 @@ out
 /generated/prisma
 
 # Firebase service account key (SANGAT PENTING!)
-*.json
 serviceAccountKey.json
+*serviceAccountKey*.json
+*firebase-adminsdk*.json
 
 # OS files
 .DS_Store

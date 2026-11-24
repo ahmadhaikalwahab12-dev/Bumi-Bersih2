@@ -44,10 +44,10 @@ function CardItem({
           </button>
         </div>
 
-        {/* IMAGE - UKURAN TETAP W=387 H=296 */}
+        {/* IMAGE - RESPONSIVE W & H */}
         <div
           onClick={() => setIsZoomOpen(true)}
-          className="w-125 h-[298px] bg-gray-100 cursor-pointer relative overflow-hidden"
+          className="w-full h-[240px] sm:h-[298px] bg-gray-100 cursor-pointer relative overflow-hidden"
         >
           {imageUrl ? (
             <Image
@@ -161,14 +161,14 @@ export default function QuizCard() {
       user: { name: "Demo User" },
       title: "Flora Pendaur Ulang Handal",
       description: "Flora sedang memulai ulang berbagai barang bekas untuk menguranginya menjadi karya yang lebih berguna.",
-      imageUrl: "/images/Fan Page 1.png",
+      imageUrl: "/images/Fan page 1.png",
     },
     {
       id: "example-2",
       user: { name: "Demo User" },
       title: "Trash is Bad, Bad is Trash",
       description: "Karya yang menggambarkan pentingnya menjaga kebersihan lingkungan dan dampak buruk dari sampah yang tidak dikelola dengan baik.",
-      imageUrl: "/images/Fan Page 2.png",
+      imageUrl: "/images/Fan page 2.png",
     },
   ];
 

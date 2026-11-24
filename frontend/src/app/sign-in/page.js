@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 export default function SignIn() {
@@ -19,6 +19,7 @@ export default function SignIn() {
     setIsLoading(true);
     setError("");
     try {
+      if (!auth) throw new Error("Firebase belum siap, coba refresh halaman");
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
       const result = await signInWithPopup(auth, provider);
@@ -31,10 +32,13 @@ export default function SignIn() {
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error("Gagal membuat session");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Gagal membuat session login");
+      }
       router.push("/signin-berhasil");
     } catch (err) {
-      setError("Google Sign In gagal. Coba lagi.");
+      setError(err.message || "Google Sign In gagal. Coba lagi.");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -49,33 +53,39 @@ export default function SignIn() {
     setIsLoading(true);
     setError("");
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      const token = await result.user.getIdToken();
-
-      const res = await fetch("/api/auth/session", {
+      // Use custom login API (supports email/password users registered via sign-up)
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
+        body: JSON.stringify({ email, password }),
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error("Gagal membuat session");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Login gagal. Coba lagi.");
+        return;
+      }
+
       router.push("/signin-berhasil");
     } catch (err) {
-      if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
-        setError("Email atau password salah");
-      } else {
-        setError("Login gagal. Coba lagi.");
-      }
+      setError("Login gagal. Periksa koneksi dan coba lagi.");
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSignIn();
   };
 
   return (
     <div className="min-h-screen bg-[#F4F2EA] flex items-center justify-center px-4 py-8 sm:py-12">
       <div className="w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-2">
         
+        {/* LEFT – Illustration */}
         <div className="hidden md:block relative bg-[#F8F8F8] p-6 lg:p-8">
           <div className="h-full flex items-center justify-center">
             <div className="relative w-full h-[300px] lg:h-[340px]">
@@ -84,6 +94,7 @@ export default function SignIn() {
           </div>
         </div>
 
+        {/* RIGHT – Form */}
         <div className="bg-[#6FB07A] p-6 sm:p-8 md:p-10 flex flex-col justify-center">
           <div className="flex items-center justify-between mb-6 sm:mb-8">
             <h1 className="text-3xl sm:text-4xl font-bold text-white">
@@ -98,6 +109,7 @@ export default function SignIn() {
             </div>
           )}
 
+          {/* Google Sign In */}
           <button
             type="button"
             onClick={handleGoogleSignIn}
@@ -118,17 +130,21 @@ export default function SignIn() {
             <div className="flex-1 h-px bg-white/30" />
           </div>
 
+          {/* Email Field */}
           <div className="mb-4">
-            <label className="block text-white text-sm mb-1.5">Username atau Email</label>
+            <label className="block text-white text-sm mb-1.5">Email</label>
             <input
-              type="text"
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="example@email.com"
-              className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-white text-sm outline-none focus:ring-2 focus:ring-[#F1C40F]"
+              disabled={isLoading}
+              className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-white text-sm outline-none focus:ring-2 focus:ring-[#F1C40F] disabled:opacity-60"
             />
           </div>
 
+          {/* Password Field */}
           <div className="mb-5 sm:mb-6">
             <label className="block text-white text-sm mb-1.5">Password</label>
             <div className="relative">
@@ -136,8 +152,10 @@ export default function SignIn() {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="••••••••"
-                className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-white text-sm outline-none focus:ring-2 focus:ring-[#F1C40F] pr-11"
+                disabled={isLoading}
+                className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-white text-sm outline-none focus:ring-2 focus:ring-[#F1C40F] pr-11 disabled:opacity-60"
               />
               <button
                 type="button"
@@ -149,6 +167,7 @@ export default function SignIn() {
             </div>
           </div>
 
+          {/* Submit */}
           <button
             type="button"
             onClick={handleSignIn}
@@ -164,7 +183,7 @@ export default function SignIn() {
             onClick={() => router.push("/sign-up")}
             className="mt-4 sm:mt-5 text-xs sm:text-sm text-white/90 text-center hover:underline transition"
           >
-            Baru? Buat akun di sini
+            Belum punya akun? Daftar di sini
           </button>
         </div>
       </div>

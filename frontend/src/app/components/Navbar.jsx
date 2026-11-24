@@ -91,26 +91,31 @@ export default function Navbar() {
           </Link>
 
           {/* DESKTOP MENU */}
-          <ul className="hidden md:flex space-x-8 items-center">
+          <ul className="hidden md:flex space-x-6 lg:space-x-8 items-center">
             <li className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-1 text-white font-medium"
+                className="flex items-center gap-1 text-white font-medium hover:text-white/80 transition"
               >
                 Home <ChevronDown size={16} />
               </button>
               {isDropdownOpen && (
-                <div className="absolute top-full left-0 mt-3 bg-white rounded-xl shadow-lg py-2 w-52">
-                  <Link href="/" className="block px-4 py-2 hover:bg-gray-100">Home</Link>
-                  <Link href="/what-to-do" className="block px-4 py-2 hover:bg-gray-100">What To Do</Link>
-                  <Link href="/zero-waste-lifestyle" className="block px-4 py-2 hover:bg-gray-100">Zero Waste Lifestyle</Link>
-                  <Link href="/recycle-craft" className="block px-4 py-2 hover:bg-gray-100">Recycle Craft</Link>
+                <div
+                  onMouseLeave={() => setIsDropdownOpen(false)}
+                  className="absolute top-full left-0 mt-3 bg-white rounded-xl shadow-lg py-2 w-52 z-50 text-gray-800"
+                >
+                  <Link href="/" onClick={() => setIsDropdownOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Home</Link>
+                  <Link href="/what-to-do" onClick={() => setIsDropdownOpen(false)} className="block px-4 py-2 hover:bg-gray-100">What To Do</Link>
+                  <Link href="/zero-waste-lifestyle" onClick={() => setIsDropdownOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Zero Waste Lifestyle</Link>
+                  <Link href="/recycle-craft" onClick={() => setIsDropdownOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Recycle Craft</Link>
+                  <Link href="/kuis" onClick={() => setIsDropdownOpen(false)} className="block px-4 py-2 hover:bg-gray-100">Kuis Lingkungan</Link>
                 </div>
               )}
             </li>
-            <Link href="/recycle-bay" className="text-white font-medium">Recycle Bay</Link>
-            <Link href="/fanwork" className="text-white font-medium">Fanwork</Link>
-            <Link href="/recycle-craft" className="text-white font-medium">Recycle Craft</Link>
+            <Link href="/recycle-bay" className="text-white font-medium hover:text-white/80 transition text-sm">Recycle Bay</Link>
+            <Link href="/fanwork" className="text-white font-medium hover:text-white/80 transition text-sm">Fanwork</Link>
+            <Link href="/recycle-craft" className="text-white font-medium hover:text-white/80 transition text-sm">Recycle Craft</Link>
+            <Link href="/kuis" className="text-white font-medium hover:text-white/80 transition text-sm">Kuis</Link>
           </ul>
 
           {/* SEARCH BAR KHUSUS RECYCLE CRAFT */}
@@ -133,10 +138,11 @@ export default function Navbar() {
           {/* RIGHT SIDE */}
           <div className="hidden md:flex items-center">
             {!isLoggedIn ? (
-              <Link href="/sign-in">
-                <button className="bg-[#E3B214] text-white px-6 py-2 rounded-lg hover:bg-yellow-500 transition">
-                  Sign In
-                </button>
+              <Link
+                href="/sign-in"
+                className="bg-[#E3B214] text-white px-6 py-2 rounded-lg hover:bg-yellow-500 transition font-medium inline-block"
+              >
+                Sign In
               </Link>
             ) : (
               <div className="relative">
@@ -177,20 +183,21 @@ export default function Navbar() {
 
         {/* MOBILE MENU */}
         {isMenuOpen && (
-          <div className="md:hidden bg-[#66AC6E] pb-4 space-y-2">
-            <Link href="/" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Home</Link>
-            <Link href="/what-to-do" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">What To Do</Link>
-            <Link href="/zero-waste-lifestyle" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Zero Waste Lifestyle</Link>
-            <Link href="/recycle-bay" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Recycle Bay</Link>
-            <Link href="/fanwork" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Fanwork</Link>
-            <Link href="/recycle-craft" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Recycle Craft</Link>
+          <div className="md:hidden bg-[#66AC6E] pb-4 pt-2 px-2 space-y-1.5 border-t border-white/20">
+            <Link href="/" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg text-sm font-medium">Home</Link>
+            <Link href="/what-to-do" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg text-sm font-medium">What To Do</Link>
+            <Link href="/zero-waste-lifestyle" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg text-sm font-medium">Zero Waste Lifestyle</Link>
+            <Link href="/recycle-bay" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg text-sm font-medium">Recycle Bay</Link>
+            <Link href="/fanwork" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg text-sm font-medium">Fanwork</Link>
+            <Link href="/recycle-craft" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg text-sm font-medium">Recycle Craft</Link>
+            <Link href="/kuis" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg text-sm font-medium">Kuis Lingkungan</Link>
             {!isLoggedIn ? (
-              <Link href="/sign-in" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Sign In</Link>
+              <Link href="/sign-in" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg text-sm font-medium">Sign In</Link>
             ) : (
               <>
-                <Link href="/profile" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Profile</Link>
-                <Link href="/my-crafts" className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg">Karya Saya</Link>
-                <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-red-200 hover:bg-white/10 rounded-lg">Sign Out</button>
+                <Link href="/profile" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg text-sm font-medium">Profile</Link>
+                <Link href="/my-crafts" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-white hover:bg-white/10 rounded-lg text-sm font-medium">Karya Saya</Link>
+                <button onClick={() => { setIsMenuOpen(false); handleLogout(); }} className="block w-full text-left px-4 py-2 text-red-200 hover:bg-white/10 rounded-lg text-sm font-medium">Sign Out</button>
               </>
             )}
           </div>

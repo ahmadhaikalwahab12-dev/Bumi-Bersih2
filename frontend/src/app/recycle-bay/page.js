@@ -44,12 +44,12 @@ export default function RecycleBay() {
       {/* Illustration Section */}
       <section className="pb-16 px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="relative w-full h-96 rounded-3xl overflow-hidden mb-12">
+          <div className="relative w-full h-80 sm:h-96 rounded-3xl overflow-hidden mb-12 shadow-lg">
             <Image
-              src="/images/Fanwork.png"
+              src="/images/crafts/recycle_bay_hero.jpg"
               alt="Recycle Bay Illustration"
               fill
-              className="object-contain"
+              className="object-cover"
               sizes="(max-width: 768px) 100vw, 1200px"
               priority
             />
@@ -294,14 +294,19 @@ export default function RecycleBay() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/zero-waste-lifestyle">
-                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-10 py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95">
+              <Link href="/what-to-do">
+                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-8 py-3.5 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 text-sm sm:text-base">
                   What To Do
                 </button>
               </Link>
-              <Link href="/recycle-bay">
-                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-10 py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95">
+              <Link href="/zero-waste-lifestyle">
+                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-8 py-3.5 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 text-sm sm:text-base">
                   Zero Waste Lifestyle
+                </button>
+              </Link>
+              <Link href="/recycle-craft">
+                <button className="bg-[#E3B214] hover:bg-yellow-500 text-white px-8 py-3.5 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 text-sm sm:text-base">
+                  Recycle Craft
                 </button>
               </Link>
             </div>

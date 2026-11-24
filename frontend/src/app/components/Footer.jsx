@@ -25,10 +25,11 @@ export default function Footer() {
               kebersihan lingkungan dengan cara mengupload karya daur ulang kamu.
             </p>
           </div>
-          <Link href="/recycle-craft">
-            <button className="bg-[#E3B214] hover:bg-yellow-300 text-white px-8 py-3 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95">
-              Upload Karyamu!
-            </button>
+          <Link
+            href="/recycle-craft"
+            className="bg-[#E3B214] hover:bg-yellow-300 text-white px-8 py-3 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 inline-block text-center"
+          >
+            Upload Karyamu!
           </Link>
         </div>
       </div>
@@ -50,6 +51,7 @@ export default function Footer() {
               <li><Link href="/" className="text-white/90 hover:text-white transition">Home</Link></li>
               <li><Link href="/what-to-do" className="text-white/90 hover:text-white transition">What To Do</Link></li>
               <li><Link href="/zero-waste-lifestyle" className="text-white/90 hover:text-white transition">Zero Waste Lifestyle</Link></li>
+              <li><Link href="/kuis" className="text-white/90 hover:text-white transition">Kuis Lingkungan</Link></li>
             </ul>
           </div>
 

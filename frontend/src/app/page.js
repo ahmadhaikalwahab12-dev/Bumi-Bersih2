@@ -267,7 +267,7 @@ export default function BumiBersihApp() {
               untuk menjaga kebersihan lingkungan dan memberi dampak nyata di sekitarmu.
             </p>
 
-            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
               <Link href="/what-to-do">
                 <button className="bg-[#66AC6E] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold hover:bg-green-700 transition-all hover:scale-105 shadow-lg w-full sm:w-auto">
                   What To Do
@@ -281,6 +281,16 @@ export default function BumiBersihApp() {
               <Link href="/recycle-bay">
                 <button className="bg-[#66AC6E] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold hover:bg-green-700 transition-all hover:scale-105 shadow-lg w-full sm:w-auto">
                   Recycle Bay
+                </button>
+              </Link>
+              <Link href="/recycle-craft">
+                <button className="bg-[#E3B214] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold hover:bg-yellow-500 transition-all hover:scale-105 shadow-lg w-full sm:w-auto">
+                  Recycle Craft
+                </button>
+              </Link>
+              <Link href="/kuis">
+                <button className="bg-emerald-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold hover:bg-emerald-700 transition-all hover:scale-105 shadow-lg w-full sm:w-auto">
+                  Kuis Lingkungan
                 </button>
               </Link>
             </div>

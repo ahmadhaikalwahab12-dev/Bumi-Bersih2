@@ -291,13 +291,18 @@ export default function WhatToDo() {
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <Link href="/zero-waste-lifestyle">
-                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 w-full sm:w-auto">
+                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-8 py-3.5 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 text-sm sm:text-base w-full sm:w-auto">
                   Zero Waste Lifestyle
                 </button>
               </Link>
               <Link href="/recycle-bay">
-                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 w-full sm:w-auto">
+                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-8 py-3.5 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 text-sm sm:text-base w-full sm:w-auto">
                   Recycle Bay
+                </button>
+              </Link>
+              <Link href="/recycle-craft">
+                <button className="bg-[#E3B214] hover:bg-yellow-500 text-white px-8 py-3.5 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 text-sm sm:text-base w-full sm:w-auto">
+                  Recycle Craft
                 </button>
               </Link>
             </div>

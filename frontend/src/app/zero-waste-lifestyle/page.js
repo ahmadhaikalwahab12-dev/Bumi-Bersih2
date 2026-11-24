@@ -261,14 +261,19 @@ export default function ZeroWasteLifestyle() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/zero-waste-lifestyle">
-                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-10 py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95">
+              <Link href="/what-to-do">
+                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-8 py-3.5 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 text-sm sm:text-base">
                   What To Do
                 </button>
               </Link>
               <Link href="/recycle-bay">
-                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-10 py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95">
+                <button className="bg-[#66AC6E] hover:bg-green-700 text-white px-8 py-3.5 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 text-sm sm:text-base">
                   Recycle Bay
+                </button>
+              </Link>
+              <Link href="/kuis">
+                <button className="bg-[#E3B214] hover:bg-yellow-500 text-white px-8 py-3.5 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap active:scale-95 text-sm sm:text-base">
+                  Kuis Lingkungan
                 </button>
               </Link>
             </div>

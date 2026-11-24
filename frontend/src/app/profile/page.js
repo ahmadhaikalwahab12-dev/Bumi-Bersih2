@@ -94,7 +94,7 @@ export default function ProfileEditPage() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/profile-edit"
+                  href="/edit-profile"
                   className="block px-4 py-3 rounded-xl bg-[#66AC6E] text-white font-medium"
                 >
                   Edit Profile
