@@ -41,21 +41,6 @@ export default function RecycleBay() {
         </div>
       </section>
 
-      {/* Illustration Section */}
-      <section className="pb-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="relative w-full h-80 sm:h-96 rounded-3xl overflow-hidden mb-12 shadow-lg">
-            <Image
-              src="/images/crafts/recycle_bay_hero.jpg"
-              alt="Recycle Bay Illustration"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 1200px"
-              priority
-            />
-          </div>
-        </div>
-      </section>
 
       {/* HERO SECTION 2 — Video Tutorials */}
       <section className="pb-12 px-4" id="fanwork">
